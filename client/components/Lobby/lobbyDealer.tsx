@@ -26,6 +26,10 @@ export const LobbyDealer: FC<LobbyPartProps> = ({ users }) => {
   const [ dealer, setDealer ] = useState<IUser>();
   const [ userArr, setUserArr ] = useState<Array<IUser>>(users);
 
+  const onStartGameClick = () => {
+    router.push(`/${lobby}/game`);
+  };
+  
   const onRoomLeave = () => {
     state.socket.emit('leaveRoom', {
       roomId: lobby,
@@ -84,11 +88,11 @@ export const LobbyDealer: FC<LobbyPartProps> = ({ users }) => {
         justifyContent="space-between"
         className={classes.mBottom}
       >
-        <Link href="/lobby/game">
-          <Button color="primary" variant="contained" className={classes.btn}>
+        {/* <Link href="/lobby/game"> */}
+          <Button color="primary" variant="contained" className={classes.btn} onClick={onStartGameClick}>
             Start Game
           </Button>
-        </Link>
+        {/* </Link> */}
         <Button
           variant="outlined"
           className={classes.btn}
