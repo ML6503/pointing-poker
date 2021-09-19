@@ -45,3 +45,13 @@ describe('WaitForAuthPopup element renders all inner elements', () => {
        
     });
 });
+
+describe('WaitForAuthPopup is not beeing rendered when Game is not started elements', () => {
+    it('no popup', () => {
+        const { queryByText } = render(<WaitForAuthPopup isGameStarted={false} isVoting={false} isAutoJoin={true} />);
+        expect(queryByText('voting in process.')).not.toBeInTheDocument();
+        expect(queryByText('Please wait for authorization.')).not.toBeInTheDocument();
+        expect(queryByText('Please wait')).not.toBeInTheDocument();
+    });
+
+});
