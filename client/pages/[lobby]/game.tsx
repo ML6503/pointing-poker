@@ -24,7 +24,7 @@ export const getServerSideProps = async (context) => {
         return {
           props: {
             userData: [],
-            gameData: [],
+            gameData: null,
             errorStatus: 'no users'
           }
         }
@@ -45,7 +45,7 @@ export const getServerSideProps = async (context) => {
       // },
       props: {
         userData: [],
-        gameData: [],
+        gameData: null,
         errorStatus: 'no room'
       },
     }
