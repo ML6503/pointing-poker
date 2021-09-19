@@ -14,8 +14,8 @@ const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: 'http://localhost:3000',
-      methods: ['GET', 'POST'],
-      allowedHeaders: ['my-custom-header'],
+      methods: [ 'GET', 'POST' ],
+      allowedHeaders: [ 'my-custom-header' ],
       credentials: true,
     },
   });
@@ -23,7 +23,6 @@ const socketServer = (httpServer) => {
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);
     console.log('Socket userId', socket.handshake.auth.userId);
-    // console.log('ALL rooms', io.sockets.adapter.rooms);
 
     socket.on('joinRoom', (message: socketRoomUserInward) => {
       const { room, user } = message;
@@ -170,7 +169,6 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('getGameData', (message) => {
-      console.log('getGameData', message);
       const { roomId, user } = message;
       const newPlayer = {
         player: user.id,
@@ -179,14 +177,10 @@ const socketServer = (httpServer) => {
       const gameInitData = roomContoller.getGameInitData(roomId);
       const issues = roomContoller.getGameIssues(roomId);
       Object.values(issues).map(
-        (issue) => (issue.players = [...issue.players, newPlayer]),
+        (issue) => (issue.players = [ ...issue.players, newPlayer ]),
       );
-
-      // console.log('issues from socket updated game data', issues);
       const gameData = { ...gameInitData, issues: issues };
-      console.log('game data updated from socket', gameData);
       if (gameData && gameData.isStarted && !gameData.isAutoJoin) {
-        console.log('late mem - game in process and ask to join', user);
         socket.to(roomId).emit('lateMemberAskToJoin', user);
       }
       io
@@ -210,7 +204,6 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('declineLateMember', (message) => {
-      console.log('from SOCKET - declined', message);
       const { roomId, userId } = message;
       const room = roomContoller.getRoomId(roomId);
       if (room) {
@@ -249,11 +242,11 @@ const socketServer = (httpServer) => {
       socket.to(roomId).emit('sprintNameChanged', sprintName);
     });
 
-    socket.on('changeIssuesLobby', message => {
+    socket.on('changeIssuesLobby', (message) => {
       const { roomId, issues } = message;
       io.in(roomId).emit('issuesLobbyChanged', issues);
-    })
-  })
+    });
+  });
 };
 
 export default socketServer;
