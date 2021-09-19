@@ -26,17 +26,17 @@ const socketServer = (httpServer) => {
     // console.log('ALL rooms', io.sockets.adapter.rooms);
 
     socket.on('joinRoom', (message: socketRoomUserInward) => {
-      const { roomId, user } = message;
-      const room = roomContoller.getRoomId(roomId);
-      if (room) {
-        socket.join(message.roomId);
+      const { room, user } = message;
+      const roomFound = roomContoller.getRoomId(room.roomId);
+      if (roomFound) {
+        socket.join(message.room.roomId);
         console.log('SOCKET JOIN');
         if (user.id) {
-          roomContoller.joinUserToRoom(roomId, user);
+          roomContoller.joinUserToRoom(room.roomId, user);
           const rooms = roomContoller.getRoomsInfo();
-          const users = roomContoller.getRoomUsers(roomId);
+          const users = roomContoller.getRoomUsers(room.roomId);
           socket.broadcast.emit('roomList', rooms);
-          io.in(roomId).emit('userJoined', users);
+          io.in(room.roomId).emit('userJoined', users);
         }
       }
     });
@@ -225,7 +225,7 @@ const socketServer = (httpServer) => {
       io.in(roomId).emit('newGameIssue', issues);
     });
 
-    socket.on('userWantsKick', (message: socketRoomUserInward) => {
+    socket.on('userWantsKick', (message) => {
       const { roomId, user } = message;
       const users = roomContoller.getRoomUsers(roomId);
       if (users && users.length >= 4) {

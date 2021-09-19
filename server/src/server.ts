@@ -29,7 +29,7 @@ app.get('/rooms', (req, res) => {
   if (rooms.length) {
     res.status(200).json(rooms);
   } else {
-    res.status(404).json('No rooms found');
+    res.status(200).json('No rooms found');
   }
 });
 

@@ -44,9 +44,10 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     setUsers(users);
   };
 
-  const onLobbyEntrance = () => {
+  const onLobbyEntrance = (roomId: string, roomName: string) => {
     const message = userCreate(
-      lobby,
+      roomId,
+      roomName,
       state.username,
       state.userSurname,
       state.avatar,
@@ -139,12 +140,12 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
               router.push('/404');
             } else {
               onLobbyReconnect(message);
-              onLobbyEntrance();
+              onLobbyEntrance(message.room.roomId, message.room.roomName);
             }
           },
         );
       } else {
-        onLobbyEntrance();
+        onLobbyEntrance(state.roomId, state.roomName);
       }
 
       state.socket.on('userJoined', (message) => {

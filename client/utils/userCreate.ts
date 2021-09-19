@@ -1,7 +1,8 @@
 import { IUserCreate } from './interfaces';
 
 export const userCreate = (
-  id: string | Array<string>,
+  roomId: string | Array<string>,
+  roomName: string,
   username: string,
   userSurname: string,
   avatar: string,
@@ -9,9 +10,12 @@ export const userCreate = (
   userRole: string,
   dealer: boolean,
 ): IUserCreate => {
-  if (typeof id === 'string') {
+  if (typeof roomId === 'string') {
     return {
-      roomId: id,
+      room: {
+        roomId,
+        roomName
+      },
       user: {
         username,
         userSurname,
