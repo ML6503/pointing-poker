@@ -104,44 +104,6 @@ export const GamePage: FC<GamePageProps> = ({
 
   };
 
-  const initData = async () => {
-    if (userData) {
-      setUsers(userData);
-    }
-    const dealer = userData.find((user) => user.dealer);
-    setDealer(dealer);
-
-    setGameIssues(gameData.issues);
-    setActiveIssueName(gameData.issues[0].issue.issueName);
-    setSprintTitle(gameData.sprintName);
-    if (gameData.timer.isTimer) {
-      setTimer(gameData.timer);
-    }
-
-    const seq = gameData.card.sequence;
-    const currentSeq = sequences.find((item) => item.name === seq);
-    if (currentSeq) {
-      setChosenSeq(
-        Array.from(
-          { length: gameData.card.cardNumber },
-          (_, i) => currentSeq.sequence[i],
-        ),
-      );
-    }
-
-    const deck = gameData.card.cardDeck;
-    const currentDeck = cardDecks.find((item) => item.name === deck);
-    if (currentDeck) {
-      setChosenDeck(
-        Array.from(
-          { length: gameData.card.cardNumber },
-          (_, i) => currentDeck.deck[i],
-        ),
-      );
-      setCardPot(currentDeck.deck[currentDeck.deck.length - 1]);
-    }
-  };
-
   const calculateIssueScore = () => {
     state.socket.emit('calcScore', {
       roomId: lobby,
