@@ -8,13 +8,10 @@ interface LobbyPageProps {
 }
 
 const LobbyPage: FC<LobbyPageProps> = ({lobbyInfo}) => {
-
   return (
     <Lobby lobbyInfo={lobbyInfo} />
   );
 };
-
-
 
 export const getServerSideProps = async (context) => {
   const { lobby } = context.params;
