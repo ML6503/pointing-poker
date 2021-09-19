@@ -4,6 +4,7 @@ import { Chat } from 'components/Chat/chat';
 import { ErrorPopup } from 'components/Error/errorPopup';
 import { useRouter } from 'next/router';
 import { FC, useContext, useEffect, useState } from 'react';
+import { apiGetLobbyChats, apiGetLobbyUsers } from 'services/apiServices';
 import {
   setDealer,
   setRoom,
@@ -32,13 +33,14 @@ interface LobbyProps {
 
 const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
   const classes = useStylesLobby();
-  const [ chatMessages, setChatMessages ] = useState<Array<IChatMessage>>();
-  const [ users, setUsers ] = useState<Array<IUser>>();
+  const [chatMessages, setChatMessages] = useState<Array<IChatMessage>>();
+  const [users, setUsers] = useState<Array<IUser>>();
   const { state, dispatch } = useContext(AppContext);
   const router = useRouter();
   const { lobby } = router.query;
-  const [ sprintName, setSprintName ] = useState('');
-  const [ issues, setIssues ] = useState<Array<string>>();
+  const [sprintName, setSprintName] = useState('');
+  const [issues, setIssues] = useState<Array<string>>();
+  const [errorPage, setErrorPage] = useState(false);
 
   const onUserJoinLeave = (users: Array<IUser>) => {
     setUsers(users);
@@ -88,6 +90,42 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     setIssues(newIssues);
   }
 
+  const onLobbyInfoRequest = async (room: string | Array<string>) => {
+    try {
+      const users = await apiGetLobbyUsers(room);
+      const userData = await users.data;
+
+      const chat = await apiGetLobbyChats(room);
+      const chatData = await chat.data;
+
+      if (users.status === 200 && chat.status === 200) {
+        if (typeof users.data === 'string') {
+          setUsers([]);
+          setChatMessages([]);
+          if (!state.dealer) {
+            setErrorPage(true);
+          }
+        } else {
+          setUsers(userData);
+          setChatMessages(chatData);
+          setErrorPage(false);
+        }
+        if (!state.username) {
+          state.socket.emit('userRoomReconnect', {
+            roomId: lobby,
+            userId: appStorage.getSession(),
+          });
+        } else {
+          onLobbyEntrance(state.roomId, state.roomName);
+        }
+      }
+    } catch {
+      setUsers([]);
+      setChatMessages([]);
+      setErrorPage(true)
+    }
+  }
+
   useEffect(() => {
     router.beforePopState(({ url, as }) => {
       console.log('beforePopState');
@@ -102,109 +140,80 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       return true;
     });
 
-    if (lobbyInfo.error === 'no room') {
-      <ErrorPopup
-        isOpen={true}
-        message={'No Room found'}
-        onClosePopup={router.push('/404')}
-      />;
-      // router.push('/404');
-    } else {
-      if (lobbyInfo.error === 'no users') {
-        if (!state.dealer) {
-          console.log('no users');
-          <ErrorPopup
-            isOpen={true}
-            message={'No Room found'}
-            onClosePopup={kickOffUser(state.userId)}
-          />;
+    setChatMessages(lobbyInfo.chat);
+    setUsers(lobbyInfo.users);
+
+    onLobbyInfoRequest(lobby);
+
+    state.socket.on(
+      'reconnectToLobby',
+      (message: { user: IUser; room: IRoomInfo }) => {
+        if (!state.username) {
+          router.push('/404');
+        } else {
+          onLobbyReconnect(message);
+          onLobbyEntrance(message.room.roomId, message.room.roomName);
         }
-      }
+      },
+    );
 
-      if (lobbyInfo.chat.length) {
-        setChatMessages(lobbyInfo.chat);
-      }
-      if (lobbyInfo.users) {
-        setUsers(lobbyInfo.users);
-      }
+    state.socket.on('userJoined', (message) => {
+      onUserJoinLeave(message);
+    });
 
-      if (!state.username) {
-        state.socket.emit('userRoomReconnect', {
-          roomId: lobby,
-          userId: appStorage.getSession(),
-        });
-        state.socket.on(
-          'reconnectToLobby',
-          (message: { user: IUser; room: IRoomInfo }) => {
-            if (!state.username) {
-              router.push('/404');
-            } else {
-              onLobbyReconnect(message);
-              onLobbyEntrance(message.room.roomId, message.room.roomName);
-            }
-          },
-        );
-      } else {
-        onLobbyEntrance(state.roomId, state.roomName);
-      }
+    state.socket.on('userLeft', (message) => {
+      onUserJoinLeave(message);
+    });
 
-      state.socket.on('userJoined', (message) => {
+    state.socket.on('userToBeKickedOff', (message) => {
+      kickOffUser(message);
+    });
+
+    state.socket.on('disconnected', () => {
+      console.log('Disconnected!!!');
+      router.push('/');
+    });
+
+    state.socket.on('sprintNameChanged', (message) => {
+      onSprintNameChange(message);
+    });
+
+    state.socket.on('issuesLobbyChanged', (message) => {
+      onIssuesChange(message);
+    });
+
+    return () => {
+      state.socket.off('userJoined', (message) => {
         onUserJoinLeave(message);
       });
 
-      state.socket.on('userLeft', (message) => {
+      state.socket.off('userLeft', (message) => {
         onUserJoinLeave(message);
       });
 
-      state.socket.on('userToBeKickedOff', (message) => {
+      state.socket.off('userToBeKickedOff', (message) => {
         kickOffUser(message);
       });
 
-      state.socket.on('disconnected', () => {
+      state.socket.off('disconnected', () => {
         console.log('Disconnected!!!');
         router.push('/');
       });
 
-      state.socket.on('sprintNameChanged', (message) => {
+      state.socket.off('sprintNameChanged', (message) => {
         onSprintNameChange(message);
       });
 
-      state.socket.on('issuesLobbyChanged', (message) => {
+      state.socket.off('issuesLobbyChanged', (message) => {
         onIssuesChange(message);
       });
 
-      return () => {
-        state.socket.off('userJoined', (message) => {
-          onUserJoinLeave(message);
-        });
-
-        state.socket.off('userLeft', (message) => {
-          onUserJoinLeave(message);
-        });
-
-        state.socket.off('userToBeKickedOff', (message) => {
-          kickOffUser(message);
-        });
-
-        state.socket.off('disconnected', () => {
-          console.log('Disconnected!!!');
-          router.push('/');
-        });
-
-        state.socket.off('sprintNameChanged', (message) => {
-          onSprintNameChange(message);
-        });
-
-        state.socket.off('issuesLobbyChanged', (message) => {
-          onIssuesChange(message);
-        });
-
-        setUsers([]);
-        setChatMessages([]);
-        setSprintName('');
-        setIssues([]);
-      };
-    }
+      setUsers([]);
+      setChatMessages([]);
+      setSprintName('');
+      setIssues([]);
+    };
+    // }
   }, []);
 
   return (
@@ -214,12 +223,19 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       <Grid container style={{ height: '100%' }}>
         {state.dealer && users && <LobbyDealer users={users} issues={issues} />}
         {!state.dealer &&
-        users && <LobbyUser users={users} sprintName={sprintName} issues={issues} />}
+          users && <LobbyUser users={users} sprintName={sprintName} issues={issues} />}
         <Grid item xs={12} md={3} sm={5} className={classes.chatPartContainer}>
           {chatMessages && <Chat chatMessages={chatMessages} />}
           {!chatMessages && <Chat chatMessages={chatMessages} />}
         </Grid>
       </Grid>
+      {errorPage && (
+        <ErrorPopup
+          isOpen={true}
+          message={'No Room found'}
+          onClosePopup={router.push('/404')}
+        />
+      )}
     </div>
   );
 };
