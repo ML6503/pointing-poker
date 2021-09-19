@@ -86,7 +86,7 @@ export interface socketRoomUserIdInward {
 }
 
 export interface socketRoomUserInward {
-  roomId: string;
+  room: IRoomInfo;
   user: IUserData;
 }
 
