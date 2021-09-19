@@ -45,7 +45,7 @@ export const RoomSelect: FC<RoomSelectProps> = ({ rooms, onRoomSelect }) => {
   const handleOpen = () => {
     setOpen(true);
   };
-
+  
   return (
     <div>
       <FormControl className={classes.formControl} fullWidth>
@@ -61,6 +61,7 @@ export const RoomSelect: FC<RoomSelectProps> = ({ rooms, onRoomSelect }) => {
           value={room.roomId}
           onChange={handleChange}
           color="secondary"
+          data-testid="room-select-input"
         >
           <MenuItem value="">
             <em>None</em>
