@@ -197,8 +197,9 @@ export interface ILatePlayer {
   userId: string;
   username: string;
   userSurname: string;
+  userRole: string;
 }
 
 export interface ILatePlayerToJoin extends ILatePlayer {
-  roomId: string
+  roomId: string;
 }

@@ -133,4 +133,5 @@ export interface socketRoomUserDataInward {
   userId: string;
   username: string;
   userSurname: string;
+  userRole: string;
 }

@@ -51,8 +51,6 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
 
   const onLobbyEntrance = (data: { room: IRoomInfo; userId: string }) => {
     const userFound = state.userId === data.userId;
-    console.log('room', data.room);
-
     if (userFound) {
       const message = userCreate(
         data.room.roomId,
@@ -130,6 +128,7 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
             userId: state.userId,
             username: state.username,
             userSurname: state.userSurname,
+            userRole: state.userRole,
           });
         }
       }
