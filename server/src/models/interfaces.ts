@@ -127,3 +127,10 @@ export interface IGameStatus {
   isAutoJoin: boolean;
   isVoting: boolean;
 }
+
+export interface socketRoomUserDataInward {
+  roomId: string;
+  userId: string;
+  username: string;
+  userSurname: string;
+}

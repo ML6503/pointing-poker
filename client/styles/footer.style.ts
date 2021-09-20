@@ -12,9 +12,9 @@ const useStylesFooter = makeStyles((theme: Theme) =>
     },
     footerContainer: {
       padding: theme.spacing(1),
-      position: 'sticky',
-      left: 0,
-      bottom: 0,
+      // position: 'sticky',
+      // left: 0,
+      // bottom: 0,
     },
     btn: {
       cursor: 'pointer',

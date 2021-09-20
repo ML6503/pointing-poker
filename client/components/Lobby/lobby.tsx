@@ -128,6 +128,8 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
           state.socket.emit('getGameData', {
             roomId: lobby,
             userId: state.userId,
+            username: state.username,
+            userSurname: state.userSurname,
           });
         }
       }
@@ -182,6 +184,11 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     });
 
     state.socket.on('allowToAutoJoin', (message) => {
+      onLobbyEntrance(message);
+      setIsAutoJoin(true);
+    });
+
+    state.socket.on('lateMemberMayJoin', (message) => {
       onLobbyEntrance(message);
       setIsAutoJoin(true);
     });

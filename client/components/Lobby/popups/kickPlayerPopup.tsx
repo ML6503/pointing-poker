@@ -30,9 +30,9 @@ const KickPlayerPopup: FC<KickPlayerPopupProps> = ({
         <Dialog
           open={isOpenKickUser}
           onClose={() => onClosePopUp(false)}
-          aria-labelledby="form-dialog-title"
+          aria-labelledby='form-dialog-title'
         >
-          <DialogTitle id="form-dialog-title" style={{ textAlign: 'center' }}>
+          <DialogTitle id='form-dialog-title' style={{ textAlign: 'center' }}>
             Kick player?
           </DialogTitle>
           <DialogContent>
@@ -43,8 +43,8 @@ const KickPlayerPopup: FC<KickPlayerPopupProps> = ({
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Button
-                  color="primary"
-                  variant="contained"
+                  color='primary'
+                  variant='contained'
                   fullWidth
                   onClick={onConfirmClick}
                 >
@@ -53,8 +53,8 @@ const KickPlayerPopup: FC<KickPlayerPopupProps> = ({
               </Grid>
               <Grid item xs={6}>
                 <Button
-                  color="primary"
-                  variant="outlined"
+                  color='primary'
+                  variant='outlined'
                   fullWidth
                   onClick={() => onClosePopUp(false)}
                 >

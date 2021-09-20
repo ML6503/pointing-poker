@@ -192,3 +192,13 @@ export interface IIssueResultConverted {
   Score: number;
   Ratio: number;
 }
+
+export interface ILatePlayer {
+  userId: string;
+  username: string;
+  userSurname: string;
+}
+
+export interface ILatePlayerToJoin extends ILatePlayer {
+  roomId: string
+}
