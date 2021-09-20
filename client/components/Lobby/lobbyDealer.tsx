@@ -31,13 +31,13 @@ import {
   timeChange,
   timerChange,
   autoJoinChange,
-  sprintNameChange
+  sprintNameChange,
 } from './lobbyDealerHelpers';
 import { DealerLeavePage } from 'components/Game/Popups/dealerLeavePage';
 
 export interface LobbyDealerProps {
   users: Array<IUser>;
-  issues: Array<string>
+  issues: Array<string>;
 }
 
 export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
@@ -45,31 +45,26 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const { state } = useContext(AppContext);
   const router = useRouter();
   const { lobby } = router.query;
-  const [ dealer, setDealer ] = useState<IUser>();
-  const [ isOpenKickUser, setIsOpenKickUser ] = useState(false);
-  const [ kickOffUser, setKickOffUser ] = useState<IUser>();
-  const [ gameSettings, setGameSettings ] = useState<IGameSettings>(
-    initGameSettings,
-  );
-  const [ chosenDeck, setChosenDeck ] = useState<Array<string>>();
-  const [ chosenSeq, setChosenSeq ] = useState<Array<number>>();
-  const [ cardPot, setCardPot ] = useState('');
-  const [ isLeaveOpen, setIsLeaveOpen ] = useState(false);
-  const [ isCreatingIssue, setIsCreatingIssue ] = useState(false);
+  const [dealer, setDealer] = useState<IUser>();
+  const [isOpenKickUser, setIsOpenKickUser] = useState(false);
+  const [kickOffUser, setKickOffUser] = useState<IUser>();
+  const [gameSettings, setGameSettings] =
+    useState<IGameSettings>(initGameSettings);
+  const [chosenDeck, setChosenDeck] = useState<Array<string>>();
+  const [chosenSeq, setChosenSeq] = useState<Array<number>>();
+  const [cardPot, setCardPot] = useState('');
+  const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const [isCreatingIssue, setIsCreatingIssue] = useState(false);
 
   const onStartGameClick = async () => {
-    console.log(gameSettings);
     if (
       !gameSettings.issues.length ||
       !gameSettings.card.cardNumber ||
-      (gameSettings.timer.isTimer &&
-        // (!gameSettings.timer.minutes && !gameSettings.timer.seconds))
-        !gameSettings.timer.time)
+      (gameSettings.timer.isTimer && !gameSettings.timer.time)
     )
       return null;
     const create = await apiCreateGame(lobby, gameSettings);
     setGameSettings(initGameSettings);
-    console.log(create);
     state.socket.emit('startGame', { roomId: lobby });
     router.push(`/${lobby}/game`);
   };
@@ -77,9 +72,10 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const onIssueCreate = (issue: IssueData) => {
     setGameSettings((prev) => {
       const newState = issueCreate(prev, issue);
-      console.log('issues Lobby', newState.issues);
-      
-      state.socket.emit('changeIssuesLobby', { roomId: lobby, issues: newState.issues });
+      state.socket.emit('changeIssuesLobby', {
+        roomId: lobby,
+        issues: newState.issues,
+      });
       return newState;
     });
   };
@@ -219,16 +215,13 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     state.socket.emit('changeSprintName', {
       roomId: lobby,
       sprintName,
-    })
-  }
+    });
+  };
 
-  useEffect(
-    () => {
-      const dealer = users?.find((user) => user.dealer);
-      setDealer(dealer);
-    },
-    [ users ],
-  );
+  useEffect(() => {
+    const dealer = users?.find((user) => user.dealer);
+    setDealer(dealer);
+  }, [users]);
   useEffect(() => {
     setChosenSeq(
       Array.from(
@@ -254,36 +247,33 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     };
   }, []);
 
-  useEffect(
-    () => {
-      const deckName = initGameSettings.card.cardDeck;
-      const deck = cardDecks.find((item) => item.name === deckName).deck;
-      if (deck) {
-        setCardPot(deck[deck.length - 1]);
-      }
-    },
-    [ chosenDeck ],
-  );
+  useEffect(() => {
+    const deckName = initGameSettings.card.cardDeck;
+    const deck = cardDecks.find((item) => item.name === deckName).deck;
+    if (deck) {
+      setCardPot(deck[deck.length - 1]);
+    }
+  }, [chosenDeck]);
 
   return (
     <Grid
       container
-      direction="column"
+      direction='column'
       item
       xs={12}
       md={9}
       sm={7}
       className={classes.lobbyPartDealerContainer}
-      wrap="nowrap"
+      wrap='nowrap'
     >
       <Grid item>
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant='h4' align='center' gutterBottom>
           Lobby
         </Typography>
       </Grid>
       <NameGame onSprintNameChange={onSprintNameChange} issues={issues} />
       <Grid item className={classes.mBottom}>
-        <Typography variant="subtitle2">Dealer:</Typography>
+        <Typography variant='subtitle2'>Dealer:</Typography>
         {dealer && (
           <UserCard
             user={dealer}
@@ -293,37 +283,36 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
         )}
       </Grid>
       <Grid container item>
-      <Grid
-        item
-        container
-        justifyContent="space-between"
-        className={classes.mBottom}
-      >
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.btn}
-          onClick={onStartGameClick}
-          disabled={!gameSettings.issues.length}
+        <Grid
+          item
+          container
+          justifyContent='space-between'
+          className={classes.mBottom}
         >
-          Start Game
-        </Button>
-        <Button
-          variant="outlined"
-          className={classes.btn}
-          onClick={() => setIsLeaveOpen(true)}
-        >
-          Cancel Game
-        </Button>
-      </Grid>
-      <div className={classes.errorWrapper}>
-      { !gameSettings.issues.length ?
-      <Typography variant="subtitle2" className={classes.error}>
-        To start the game, you need to create at least one issue
-        </Typography>
-        : null
-        }
-      </div>
+          <Button
+            color='primary'
+            variant='contained'
+            className={classes.btn}
+            onClick={onStartGameClick}
+            disabled={!gameSettings.issues.length}
+          >
+            Start Game
+          </Button>
+          <Button
+            variant='outlined'
+            className={classes.btn}
+            onClick={() => setIsLeaveOpen(true)}
+          >
+            Cancel Game
+          </Button>
+        </Grid>
+        <div className={classes.errorWrapper}>
+          {!gameSettings.issues.length ? (
+            <Typography variant='subtitle2' className={classes.error}>
+              To start the game, you need to create at least one issue
+            </Typography>
+          ) : null}
+        </div>
       </Grid>
       <Grid item container>
         {users && <MemberList users={users} onKickUser={onKickUser} />}

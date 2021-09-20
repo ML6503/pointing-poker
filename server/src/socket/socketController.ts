@@ -159,11 +159,6 @@ const socketServer = (httpServer) => {
       }
     });
 
-    // socket.on('isVotingStarted', (message: { roomId: string }) => {
-    //   const voting = roomContoller.getIsVoting(message.roomId);
-    //   socket.to(message.roomId).emit('votingStarted',  voting );
-    // });
-
     socket.on('addNewGameIssue', (message: socketRoomNewIssueInward) => {
       const { roomId, newIssue } = message;
       roomContoller.addNewIssue(roomId, newIssue);
@@ -171,66 +166,40 @@ const socketServer = (httpServer) => {
       io.in(roomId).emit('newGameIssue', issues);
     });
 
-    // socket.on('getGameData', (message) => {
-    //   const { roomId, user } = message;
-    //   const newPlayer = {
-    //     player: user.id,
-    //     choice: 0,
-    //   };
-    //   const gameInitData = roomContoller.getGameInitData(roomId);
-    //   const issues = roomContoller.getGameIssues(roomId);
-    //   Object.values(issues).map(
-    //     (issue) => (issue.players = [ ...issue.players, newPlayer ]),
-    //   );
-    //   const gameData = { ...gameInitData, issues: issues };
-    //   if (gameData && gameData.isStarted && !gameData.isAutoJoin) {
-    //     socket.to(roomId).emit('lateMemberAskToJoin', user);
-    //   }
-    //   io
-    //     .in(message.roomId)
-    //     .emit('gameData', { gameData: gameData, lateMember: user });
-    // });
-
     socket.on('getGameData', (message: socketRoomUserDataInward) => {
-      const { roomId, userId, username, userSurname } = message;
+      const { roomId, userId, username, userSurname, userRole } = message;
       const gameStatus = roomContoller.getGameStatus(roomId);
       const room = roomContoller.getRoom(roomId);
 
       if (gameStatus) {
-        console.log(gameStatus);
-
         if (gameStatus.isAutoJoin) {
-          console.log('allowToAutoJoin');
-          roomContoller.addLatePlayer(roomId, userId);
+          if (userRole === 'member') {
+            roomContoller.addLatePlayer(roomId, userId);
+          }
           socket.emit('allowToAutoJoin', { room, userId });
         } else if (gameStatus.isStarted) {
-          console.log('latePlayerAskToJoin');
-
           socket.to(roomId).emit('latePlayerAskToJoin', {
             room,
             userId,
             username,
             userSurname,
+            userRole,
           });
           socket.emit('votingIsOn', userId);
         } else {
-          console.log('joinToLobby');
           socket.emit('joinToLobby', { room, userId });
         }
       }
     });
 
-    // socket.on('allowLateMemberIntoGame', (message) => {
-    //   const { roomId, userId } = message;
-    //   socket.to(roomId).emit('lateMemberMayJoin', userId);
-    // });
-
     socket.on('allowLatePlayerIntoGame', (message) => {
-      const { roomId, userId } = message;
-      roomContoller.addLatePlayer(roomId, userId);
+      const { roomId, user } = message;
+      if (user.userRole === 'member') {
+        roomContoller.addLatePlayer(roomId, user.userId);
+      }
       const room = roomContoller.getRoom(roomId);
-      socket.broadcast.emit('votingIsOff', userId);
-      socket.broadcast.emit('lateMemberMayJoin', { room, userId });
+      socket.broadcast.emit('votingIsOff', user.userId);
+      socket.broadcast.emit('lateMemberMayJoin', { room, userId: user.userId });
     });
 
     socket.on('checkTimer', (message) => {
@@ -245,10 +214,6 @@ const socketServer = (httpServer) => {
 
     socket.on('declineLateMember', (message) => {
       const { roomId, userId } = message;
-      // const room = roomContoller.getRoomId(roomId);
-      // if (room) {
-      //   socket.to(roomId).emit('memberIsDeclined', userId);
-      // }
       socket.broadcast.emit('memberIsDeclined', userId);
     });
 

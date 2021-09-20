@@ -11,8 +11,8 @@ interface NameGameProps {
 
 const NameGame: FC<NameGameProps> = ({ onSprintNameChange, issues }) => {
   const classes = useStylesSettingsGame();
-  const [ editMode, setEditMode ] = useState(false);
-  const [ sprintName, setSprintName ] = useState('');
+  const [editMode, setEditMode] = useState(false);
+  const [sprintName, setSprintName] = useState('');
 
   const deactivateEditMode = () => {
     setEditMode(false);
@@ -23,7 +23,6 @@ const NameGame: FC<NameGameProps> = ({ onSprintNameChange, issues }) => {
   };
 
   const onChangeConfirm = () => {
-    console.log('sprintName', sprintName);
     onSprintNameChange(sprintName);
     deactivateEditMode();
   };
@@ -35,18 +34,18 @@ const NameGame: FC<NameGameProps> = ({ onSprintNameChange, issues }) => {
           container
           item
           xs={12}
-          justifyContent="center"
-          alignItems="center"
+          justifyContent='center'
+          alignItems='center'
         >
           <Grid item>
-            <Typography variant="h6" align="left">
+            <Typography variant='h6' align='left'>
               Sprint:{' '}
             </Typography>
           </Grid>
           <Grid item>
             <Typography
               className={classes.gameName}
-              variant="h5"
+              variant='h5'
               onClick={activateEditMode}
             >
               {sprintName}
@@ -55,12 +54,12 @@ const NameGame: FC<NameGameProps> = ({ onSprintNameChange, issues }) => {
           <Grid item>
             <CreateIcon
               className={classes.icon}
-              color="primary"
+              color='primary'
               onClick={() => setEditMode(true)}
             />
           </Grid>
           <Grid>
-            <Typography variant="h6" align="left">
+            <Typography variant='h6' align='left'>
               (issues {issues && issues.join(', ')})
             </Typography>
           </Grid>
@@ -71,19 +70,19 @@ const NameGame: FC<NameGameProps> = ({ onSprintNameChange, issues }) => {
           container
           item
           xs={12}
-          justifyContent="center"
-          alignItems="center"
+          justifyContent='center'
+          alignItems='center'
         >
           <TextField
             autoFocus
             value={sprintName}
-            type="number"
+            type='number'
             onChange={(e) => setSprintName(e.target.value)}
             style={{ width: '80px' }}
           />
           <CheckIcon
             className={classes.icon}
-            color="primary"
+            color='primary'
             onClick={onChangeConfirm}
             style={{ marginLeft: '10px' }}
           />

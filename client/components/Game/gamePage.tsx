@@ -50,7 +50,6 @@ export const GamePage: FC<GamePageProps> = ({
 
   const onUserJoinLeave = (users: Array<IUser>) => {
     setUsers(users);
-    console.log('Lobby Dealer join/left user');
   };
 
   const onIssueClick = (issueName: string) => {
@@ -73,7 +72,6 @@ export const GamePage: FC<GamePageProps> = ({
   };
 
   const onTimerStop = () => {
-    console.log(('Timer Stop'));
     if (timer.isTimer) {
       setTimer({
         isTimer: true,
