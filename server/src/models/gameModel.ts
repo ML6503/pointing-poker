@@ -7,6 +7,7 @@ import {
   IGameSettingsFromClient,
   IGamePlayer,
   IIssue,
+  IGameStatus,
 } from './interfaces';
 
 export const nonVoted = 999;
@@ -228,6 +229,22 @@ class Game {
       this.issues.splice(issueIndex, 1, amendedIssue);
     }
   };
+
+  addLatePlayer = (player: string): void => {
+    const newPlayer = {
+      player: player,
+      choice: 0,
+    };
+    this.issues.forEach(issue => issue.players.push(newPlayer));
+  }
+
+  getGameStatus = (): IGameStatus => {
+    return {
+      isStarted: this.isStarted,
+      isAutoJoin: this.isAutoJoin,
+      isVoting: this.isVoting,
+    }
+  }
 }
 
 export default Game;

@@ -121,3 +121,16 @@ export interface IKickUserVotes {
   votes: number;
   voted: number;
 }
+
+export interface IGameStatus {
+  isStarted: boolean;
+  isAutoJoin: boolean;
+  isVoting: boolean;
+}
+
+export interface socketRoomUserDataInward {
+  roomId: string;
+  userId: string;
+  username: string;
+  userSurname: string;
+}

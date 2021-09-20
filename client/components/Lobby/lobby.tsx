@@ -41,23 +41,31 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
   const [sprintName, setSprintName] = useState('');
   const [issues, setIssues] = useState<Array<string>>();
   const [errorPage, setErrorPage] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
+  const [isAutoJoin, setIsAutoJoin] = useState(false);
 
   const onUserJoinLeave = (users: Array<IUser>) => {
     setUsers(users);
   };
 
-  const onLobbyEntrance = (roomId: string, roomName: string) => {
-    const message = userCreate(
-      roomId,
-      roomName,
-      state.username,
-      state.userSurname,
-      state.avatar,
-      state.userId,
-      state.userRole,
-      state.dealer,
-    );
-    state.socket.emit('joinRoom', message);
+  const onLobbyEntrance = (data: { room: IRoomInfo; userId: string }) => {
+    const userFound = state.userId === data.userId;
+    console.log('room', data.room);
+
+    if (userFound) {
+      const message = userCreate(
+        data.room.roomId,
+        data.room.roomName,
+        state.username,
+        state.userSurname,
+        state.avatar,
+        state.userId,
+        state.userRole,
+        state.dealer,
+      );
+      state.socket.emit('joinRoom', message);
+    }
   };
 
   const onLobbyReconnect = (message: { user: IUser; room: IRoomInfo }) => {
@@ -86,9 +94,9 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
   };
 
   const onIssuesChange = (issues: Array<IGameIssue>) => {
-    const newIssues = issues.map(issue => issue.issueName);
+    const newIssues = issues.map((issue) => issue.issueName);
     setIssues(newIssues);
-  }
+  };
 
   const onLobbyInfoRequest = async (room: string | Array<string>) => {
     try {
@@ -110,21 +118,36 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
           setChatMessages(chatData);
           setErrorPage(false);
         }
+
         if (!state.username) {
           state.socket.emit('userRoomReconnect', {
             roomId: lobby,
             userId: appStorage.getSession(),
           });
         } else {
-          onLobbyEntrance(state.roomId, state.roomName);
+          state.socket.emit('getGameData', {
+            roomId: lobby,
+            userId: state.userId,
+            username: state.username,
+            userSurname: state.userSurname,
+          });
         }
       }
     } catch {
       setUsers([]);
       setChatMessages([]);
-      setErrorPage(true)
+      setErrorPage(true);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (isAutoJoin) {
+      const userFound = users.find((user) => user.id === state.userId);
+      if (userFound) {
+        router.push(`/${lobby}/game`);
+      }
+    }
+  }, [isAutoJoin, users]);
 
   useEffect(() => {
     router.beforePopState(({ url, as }) => {
@@ -152,10 +175,23 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
           router.push('/404');
         } else {
           onLobbyReconnect(message);
-          onLobbyEntrance(message.room.roomId, message.room.roomName);
         }
       },
     );
+
+    state.socket.on('joinToLobby', (message) => {
+      onLobbyEntrance(message);
+    });
+
+    state.socket.on('allowToAutoJoin', (message) => {
+      onLobbyEntrance(message);
+      setIsAutoJoin(true);
+    });
+
+    state.socket.on('lateMemberMayJoin', (message) => {
+      onLobbyEntrance(message);
+      setIsAutoJoin(true);
+    });
 
     state.socket.on('userJoined', (message) => {
       onUserJoinLeave(message);
@@ -183,6 +219,10 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     });
 
     return () => {
+      state.socket.off('joinToLobby', (message) => {
+        onLobbyEntrance(message);
+      });
+
       state.socket.off('userJoined', (message) => {
         onUserJoinLeave(message);
       });
@@ -213,7 +253,6 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       setSprintName('');
       setIssues([]);
     };
-    // }
   }, []);
 
   return (
@@ -222,8 +261,9 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     >
       <Grid container style={{ height: '100%' }}>
         {state.dealer && users && <LobbyDealer users={users} issues={issues} />}
-        {!state.dealer &&
-          users && <LobbyUser users={users} sprintName={sprintName} issues={issues} />}
+        {!state.dealer && users && (
+          <LobbyUser users={users} sprintName={sprintName} issues={issues} />
+        )}
         <Grid item xs={12} md={3} sm={5} className={classes.chatPartContainer}>
           {chatMessages && <Chat chatMessages={chatMessages} />}
           {!chatMessages && <Chat chatMessages={chatMessages} />}

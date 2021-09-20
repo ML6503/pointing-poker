@@ -6,6 +6,8 @@ import {
   IGamePageIssue,
   IUser,
   IGameTimer,
+  ILatePlayer,
+  ILatePlayerToJoin,
 } from 'utils/interfaces';
 import { LateMemberAccess } from './Popups/lateMemberAccess';
 
@@ -57,7 +59,7 @@ export const GameDealer: FC<GameDealerProps> = ({
   const [ title, setTitle ] = useState<string>();
   const [ isOpen, setIsOpen ] = useState(false);
   const [ requestToJoin, setRequestToJoin ] = useState(false);
-  const [ lateMember, setLateMember ] = useState<IUser>(null);
+  const [ lateMember, setLateMember ] = useState<ILatePlayer>(null);
   const [ isScoreOpen, setIsScoreOpen ] = useState(false);
   const [ isLeaveOpen, setIsLeaveOpen ] = useState(false);
   const btnHidden = clsx(timer && timer.isTimer ? classes.btnHidden : classes.mBottom);
@@ -102,6 +104,15 @@ export const GameDealer: FC<GameDealerProps> = ({
     onChangeCloseIssue();
   };
 
+  const lateMemberToJoin = (data: ILatePlayerToJoin) => {
+    setLateMember({
+      userId: data.userId,
+      username: data.username,
+      userSurname: data.userSurname
+    });
+    setRequestToJoin(true);
+  }
+
   useEffect(
     () => {
       const newTitle = gameIssues
@@ -118,9 +129,14 @@ export const GameDealer: FC<GameDealerProps> = ({
     });
 
     state.socket.on('lateMemberAskToJoin', (message) => {
-      setLateMember(message);
+      // setLateMember(message);
       setRequestToJoin(true);
     });
+
+    state.socket.on('latePlayerAskToJoin', (message) => {
+      console.log('latePlayerAskToJoin');
+      lateMemberToJoin(message)
+    })
 
     return () => {
       state.socket.off('gameOver', (message) => {
@@ -137,9 +153,9 @@ export const GameDealer: FC<GameDealerProps> = ({
   };
 
   const onAllow = () => {
-    state.socket.emit('allowLateMemberIntoGame', {
+    state.socket.emit('allowLatePlayerIntoGame', {
       roomId: lobby,
-      userId: lateMember.id,
+      userId: lateMember.userId,
     });
     handleCloseDialog();
   };
@@ -147,7 +163,7 @@ export const GameDealer: FC<GameDealerProps> = ({
   const onRoomLeaveLateMember = () => {
     state.socket.emit('declineLateMember', {
       roomId: lobby,
-      userId: lateMember.id,
+      userId: lateMember.userId,
     });
     handleCloseDialog();
   };
