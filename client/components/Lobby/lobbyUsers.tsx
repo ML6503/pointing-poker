@@ -104,24 +104,24 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
       gameStart();
     });
           
-    state.socket.emit('getGameData', { 
-      roomId: lobby,
-      user: { 
-        username: state.username,
-        userSurname: state.userSurname,
-        avatar: state.avatar,
-        id: state.userId,
-        userRole: state.userRole,
-      }
-    });
+    // state.socket.emit('getGameData', { 
+    //   roomId: lobby,
+    //   user: { 
+    //     username: state.username,
+    //     userSurname: state.userSurname,
+    //     avatar: state.avatar,
+    //     id: state.userId,
+    //     userRole: state.userRole,
+    //   }
+    // });
 
-    state.socket.on('gameData', (message) => {
-    const { gameData } = message;
-    console.log('game DATA', gameData);
-    if(gameData && gameData.isStarted) {
-      setIsGameStarted(true);
-      setIsVoting(gameData.isVoting);
-      setIsAutoJoin(gameData.isAutoJoin); 
+    // state.socket.on('gameData', (message) => {
+    // const { gameData } = message;
+    // console.log('game DATA', gameData);
+    // if(gameData && gameData.isStarted) {
+    //   setIsGameStarted(true);
+    //   setIsVoting(gameData.isVoting);
+    //   setIsAutoJoin(gameData.isAutoJoin); 
     // state.socket.emit('isVotingStarted', { roomId: state.roomId });
 
     // state.socket.on('votingStarted', (message) => {
@@ -129,25 +129,25 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
     //   setIsVoting(message.voting);
     // });
 
-    state.socket.on('votingIsOver', (message) => {
-      console.log('LOBBY VOTING IS OVER', message);
-      setIsVoting(message);
-    });
+    // state.socket.on('votingIsOver', (message) => {
+    //   console.log('LOBBY VOTING IS OVER', message);
+    //   setIsVoting(message);
+    // });
 
 
      
-      if( !gameData.isVoting && gameData.isAutoJoin) {    
-        gameStart();
-      } if(!gameData.isAutoJoin) {    
-        state.socket.on('lateMemberMayJoin', (message) => {     
-            if( state.userId === message) {
-              gameStart();
-            }
-        }); 
-      }
-    }
+    //   if( !gameData.isVoting && gameData.isAutoJoin) {    
+    //     gameStart();
+    //   } if(!gameData.isAutoJoin) {    
+    //     state.socket.on('lateMemberMayJoin', (message) => {     
+    //         if( state.userId === message) {
+    //           gameStart();
+    //         }
+    //     }); 
+    //   }
+    // }
   
-    });
+    // });
 
     state.socket.on('memberIsDeclined', (message) => {   
       if(state.userId === message) {

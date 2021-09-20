@@ -121,3 +121,9 @@ export interface IKickUserVotes {
   votes: number;
   voted: number;
 }
+
+export interface IGameStatus {
+  isStarted: boolean;
+  isAutoJoin: boolean;
+  isVoting: boolean;
+}
