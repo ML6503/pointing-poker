@@ -3,6 +3,7 @@ import {
   socketRoomIssueInward,
   socketRoomNewIssueInward,
   socketRoomPlayerChoiceInward,
+  socketRoomUserDataInward,
   socketRoomUserIdInward,
   socketRoomUserIdmessageInward,
   socketRoomUserInward,
@@ -14,8 +15,8 @@ const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: 'http://localhost:3000',
-      methods: [ 'GET', 'POST' ],
-      allowedHeaders: [ 'my-custom-header' ],
+      methods: ['GET', 'POST'],
+      allowedHeaders: ['my-custom-header'],
       credentials: true,
     },
   });
@@ -23,20 +24,19 @@ const socketServer = (httpServer) => {
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);
     console.log('Socket userId', socket.handshake.auth.userId);
-    // console.log('ALL rooms', io.sockets.adapter.rooms);
 
     socket.on('joinRoom', (message: socketRoomUserInward) => {
-      const { roomId, user } = message;
-      const room = roomContoller.getRoomId(roomId);
-      if (room) {
-        socket.join(message.roomId);
+      const { room, user } = message;
+      const roomFound = roomContoller.getRoomId(room.roomId);
+      if (roomFound) {
+        socket.join(message.room.roomId);
         console.log('SOCKET JOIN');
         if (user.id) {
-          roomContoller.joinUserToRoom(roomId, user);
+          roomContoller.joinUserToRoom(room.roomId, user);
           const rooms = roomContoller.getRoomsInfo();
-          const users = roomContoller.getRoomUsers(roomId);
+          const users = roomContoller.getRoomUsers(room.roomId);
           socket.broadcast.emit('roomList', rooms);
-          io.in(roomId).emit('userJoined', users);
+          io.in(room.roomId).emit('userJoined', users);
         }
       }
     });
@@ -151,16 +151,13 @@ const socketServer = (httpServer) => {
       roomContoller.setVoting(roomId, voting);
       const timer = roomContoller.getTimer(roomId);
       if (timer) {
-        io
-          .in(roomId)
-          .emit('timerStarted', { time: Date.now(), timer, voting: true });
+        io.in(roomId).emit('timerStarted', {
+          time: Date.now(),
+          timer,
+          voting: true,
+        });
       }
     });
-
-    // socket.on('isVotingStarted', (message: { roomId: string }) => {
-    //   const voting = roomContoller.getIsVoting(message.roomId);
-    //   socket.to(message.roomId).emit('votingStarted',  voting );
-    // });
 
     socket.on('addNewGameIssue', (message: socketRoomNewIssueInward) => {
       const { roomId, newIssue } = message;
@@ -169,33 +166,40 @@ const socketServer = (httpServer) => {
       io.in(roomId).emit('newGameIssue', issues);
     });
 
-    socket.on('getGameData', (message) => {
-      console.log('getGameData', message);
-      const { roomId, user } = message;
-      const newPlayer = {
-        player: user.id,
-        choice: 0,
-      };
-      const gameInitData = roomContoller.getGameInitData(roomId);
-      const issues = roomContoller.getGameIssues(roomId);
-      Object.values(issues).map(
-        (issue) => (issue.players = [ ...issue.players, newPlayer ]),
-      );
-      // console.log('issues from socket updated game data', issues);
-      const gameData = { ...gameInitData, issues: issues };
-      console.log('game data updated from socket', gameData);
-      if (gameData && gameData.isStarted && !gameData.isAutoJoin) {
-        console.log('late mem - game in process and ask to join', user);
-        socket.to(roomId).emit('lateMemberAskToJoin', user);
+    socket.on('getGameData', (message: socketRoomUserDataInward) => {
+      const { roomId, userId, username, userSurname, userRole } = message;
+      const gameStatus = roomContoller.getGameStatus(roomId);
+      const room = roomContoller.getRoom(roomId);
+
+      if (gameStatus) {
+        if (gameStatus.isAutoJoin) {
+          if (userRole === 'member') {
+            roomContoller.addLatePlayer(roomId, userId);
+          }
+          socket.emit('allowToAutoJoin', { room, userId });
+        } else if (gameStatus.isStarted) {
+          socket.to(roomId).emit('latePlayerAskToJoin', {
+            room,
+            userId,
+            username,
+            userSurname,
+            userRole,
+          });
+          socket.emit('votingIsOn', userId);
+        } else {
+          socket.emit('joinToLobby', { room, userId });
+        }
       }
-      io
-        .in(message.roomId)
-        .emit('gameData', { gameData: gameData, lateMember: user });
     });
 
-    socket.on('allowLateMemberIntoGame', (message) => {
-      const { roomId, userId } = message;
-      socket.to(roomId).emit('lateMemberMayJoin', userId);
+    socket.on('allowLatePlayerIntoGame', (message) => {
+      const { roomId, user } = message;
+      if (user.userRole === 'member') {
+        roomContoller.addLatePlayer(roomId, user.userId);
+      }
+      const room = roomContoller.getRoom(roomId);
+      socket.broadcast.emit('votingIsOff', user.userId);
+      socket.broadcast.emit('lateMemberMayJoin', { room, userId: user.userId });
     });
 
     socket.on('checkTimer', (message) => {
@@ -209,12 +213,8 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('declineLateMember', (message) => {
-      console.log('from SOCKET - declined', message);
       const { roomId, userId } = message;
-      const room = roomContoller.getRoomId(roomId);
-      if (room) {
-        socket.to(roomId).emit('memberIsDeclined', userId);
-      }
+      socket.broadcast.emit('memberIsDeclined', userId);
     });
 
     socket.on('amendScoreGameIssue', (message) => {
@@ -224,7 +224,7 @@ const socketServer = (httpServer) => {
       io.in(roomId).emit('newGameIssue', issues);
     });
 
-    socket.on('userWantsKick', (message: socketRoomUserInward) => {
+    socket.on('userWantsKick', (message) => {
       const { roomId, user } = message;
       const users = roomContoller.getRoomUsers(roomId);
       if (users && users.length >= 4) {
@@ -248,10 +248,10 @@ const socketServer = (httpServer) => {
       socket.to(roomId).emit('sprintNameChanged', sprintName);
     });
 
-    socket.on('changeIssuesLobby', message => {
+    socket.on('changeIssuesLobby', (message) => {
       const { roomId, issues } = message;
       io.in(roomId).emit('issuesLobbyChanged', issues);
-    })
+    });
   });
 };
 

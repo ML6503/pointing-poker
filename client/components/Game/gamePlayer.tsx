@@ -1,11 +1,7 @@
 import { useRouter } from 'next/router';
-import { FC, useEffect, useState, useContext } from 'react';
+import React, { FC, useEffect, useState, useContext } from 'react';
 import { Typography, Grid, Box, Button } from '@material-ui/core';
-import {
-  IGamePageIssue,
-  IGameTimer,
-  IUser,
-} from 'utils/interfaces';
+import { IGamePageIssue, IGameTimer, IUser } from 'utils/interfaces';
 import AppContext from 'store/store';
 import { UserCard } from 'components/Cards/userCard';
 import { roles } from 'utils/configs';
@@ -20,7 +16,7 @@ interface GameDealerProps {
   timer: IGameTimer;
   timeStarted: number;
   onTimerStop: () => void;
-  sprintTitle: string
+  sprintTitle: string;
 }
 
 export const GamePlayer: FC<GameDealerProps> = ({
@@ -105,8 +101,7 @@ export const GamePlayer: FC<GameDealerProps> = ({
             </Box>
           </Grid>
         </Grid>
-        {timer &&
-        timer.isTimer && (
+        {timer && timer.isTimer && (
           <Timer
             timer={timer}
             timeStarted={timeStarted}

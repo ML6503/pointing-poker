@@ -6,31 +6,6 @@ interface HomePageProps {
   rooms: Array<IRoomInfo>
 }
 
-// function useSocket(url) {
-//   const [ socket, setSocket ] = useState(null);
-
-//   useEffect(() => {
-//     const socketIo = io(url, {
-//       withCredentials: true,
-//       extraHeaders: {
-//         'my-custom-header': 'abcd',
-//       },
-//     });
-
-//     setSocket(socketIo);
-
-//     function cleanup() {
-//       socketIo.disconnect();
-//     }
-//     return cleanup;
-
-//     // should only run once and not on every re-render,
-//     // so pass an empty array
-//   }, []);
-
-//   return socket;
-// }
-
 const HomePage = ({ rooms }: HomePageProps) => {
   return (
     <div>
@@ -42,7 +17,16 @@ const HomePage = ({ rooms }: HomePageProps) => {
 export const getServerSideProps = async () => {
   try {
     const res = await apiGetRooms();
-    if( res.status === 200) {
+    const data = await res.data;
+
+    if (res.status === 200) {
+      if (typeof data === 'string') {
+        return {
+          props: {
+            rooms: []
+          }
+        }
+      }
       return {
         props: {
           rooms: res.data
@@ -50,12 +34,12 @@ export const getServerSideProps = async () => {
       }
     }
   } catch {
-      return {
-        props: {
-          rooms: []
-        }
+    return {
+      props: {
+        rooms: []
       }
     }
+  }
 };
 
 export default HomePage;

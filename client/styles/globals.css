@@ -22,3 +22,8 @@ html::-webkit-scrollbar-track {
 html::-webkit-scrollbar-track:hover {
   background-color: #eee;
 }
+
+div[role="dialog"] {
+  max-width: 800px;
+  max-height: 500px;
+}

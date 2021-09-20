@@ -29,20 +29,17 @@ app.get('/rooms', (req, res) => {
   if (rooms.length) {
     res.status(200).json(rooms);
   } else {
-    res.status(404).json('No rooms found');
+    res.status(200).json('No rooms found');
   }
 });
 
 app.get('/chats/:room', (req, res) => {
   const room = req.params.room;
-  console.log('ROOM request for chat', room);
   const chat = roomContoller.getRoomChat(room);
   return res.status(200).json(chat);
 });
 
 app.get('/users/:room', (req, res) => {
-  console.log('USERS request');
-
   const roomId = req.params.room;
   const room = roomContoller.getRoomId(roomId);
   if (room) {
@@ -50,7 +47,6 @@ app.get('/users/:room', (req, res) => {
     if (users.length) {
       res.status(200).json(users);
     } else {
-      console.log('EMPTY ROOM');
       res.status(200).json('No users found');
     }
   } else res.status(404).json('No room found');
@@ -75,7 +71,6 @@ app.get('/gamestart/:room', (req, res) => {
 
 app.post('/gamestart/:room', (req, res) => {
   const room = req.params.room;
-  console.log('START');
   roomContoller.gameInit(room, req.body);
   res.status(201).json('created');
 });

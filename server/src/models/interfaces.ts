@@ -86,7 +86,7 @@ export interface socketRoomUserIdInward {
 }
 
 export interface socketRoomUserInward {
-  roomId: string;
+  room: IRoomInfo;
   user: IUserData;
 }
 
@@ -120,4 +120,18 @@ export interface socketRoomUserKickVote {
 export interface IKickUserVotes {
   votes: number;
   voted: number;
+}
+
+export interface IGameStatus {
+  isStarted: boolean;
+  isAutoJoin: boolean;
+  isVoting: boolean;
+}
+
+export interface socketRoomUserDataInward {
+  roomId: string;
+  userId: string;
+  username: string;
+  userSurname: string;
+  userRole: string;
 }

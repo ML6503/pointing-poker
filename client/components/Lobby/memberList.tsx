@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@material-ui/core';
 import useStylesMemberList from '@styles/memberList.style';
 import { UserCard } from 'components/Cards/userCard';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { roles } from 'utils/configs';
 import { IUser } from 'utils/interfaces';
 
@@ -13,9 +13,20 @@ interface MemberListProps {
 
 export const MemberList: FC<MemberListProps> = ({ users, onKickUser }) => {
   const classes = useStylesMemberList();
-  const isMember = users
-    .filter((user) => !user.dealer)
-    .some((user) => user.userRole === roles.member);
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(
+    () => {
+      if (users.length) {
+        setIsMember(
+          users
+            .filter((user) => !user.dealer)
+            .some((user) => user.userRole === roles.member),
+        );
+      }
+    },
+    [users],
+  );
 
   return (
     <div className={classes.container}>
@@ -25,7 +36,7 @@ export const MemberList: FC<MemberListProps> = ({ users, onKickUser }) => {
         </Typography>
       ) : null}
       <Grid container spacing={2} className={classes.root}>
-        {users &&
+        {isMember ? (
           users.map(
             (user) =>
               !user.dealer &&
@@ -38,7 +49,9 @@ export const MemberList: FC<MemberListProps> = ({ users, onKickUser }) => {
                   />
                 </Grid>
               ),
-          )}
+          )
+        ) : null
+        }
       </Grid>
     </div>
   );

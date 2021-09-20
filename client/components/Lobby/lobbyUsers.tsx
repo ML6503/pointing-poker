@@ -6,33 +6,37 @@ import useStylesLobbyPart from '@styles/lobbyPart.style';
 import { MemberList } from 'components/Lobby/memberList';
 import { UserCard } from 'components/Cards/userCard';
 import AppContext from 'store/store';
-import { IGameIssue, IUser } from 'utils/interfaces';
+import { IUser } from 'utils/interfaces';
 import { ObserverList } from './observerList';
 import { roles } from 'utils/configs';
 import KickPlayerPopup from './popups/kickPlayerPopup';
 import KickPlayerReject from './popups/kickPlayerReject';
 import KickPlayerConfirm from './popups/kickPlayerConfirm';
 import WaitForAuthPopup from './popups/waitForAuthPopup';
+import { PlayerNotAllowed } from './popups/playerNotAllowed';
 
 export interface LobbyUserProps {
   users: Array<IUser>;
   sprintName: string;
-  issues: Array<string>
+  issues: Array<string>;
 }
 
-export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => {
+export const LobbyUser: FC<LobbyUserProps> = ({
+  users,
+  sprintName,
+  issues,
+}) => {
   const classes = useStylesLobbyPart();
   const { state } = useContext(AppContext);
   const router = useRouter();
   const { lobby } = router.query;
-  const [ dealer, setDealer ] = useState<IUser>();
-  const [ isOpenKickUser, setIsOpenKickUser ] = useState(false);
-  const [ kickOffUser, setKickOffUser ] = useState<IUser>();
-  const [ isOpenReject, setIsOpenReject ] = useState(false);
-  const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
-  const [ isGameStarted, setIsGameStarted] = useState(false);
-  const [ isVoting, setIsVoting ] = useState(false);
-  const [ isAutoJoin, setIsAutoJoin ] = useState(false);
+  const [dealer, setDealer] = useState<IUser>();
+  const [isOpenKickUser, setIsOpenKickUser] = useState(false);
+  const [kickOffUser, setKickOffUser] = useState<IUser>();
+  const [isOpenReject, setIsOpenReject] = useState(false);
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
+  const [isNotAllowed, setIsNotAllowed] = useState(false);
 
   const onRoomLeave = () => {
     state.socket.emit('leaveRoom', {
@@ -44,10 +48,6 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
 
   const onDeleteUser = (user: IUser) => {
     state.socket.emit('userWantsKick', { roomId: lobby, user });
-  };
-
-  const gameStart = () => {
-    router.push(`/${lobby}/game`);
   };
 
   const gameFinish = (message: string) => {
@@ -87,74 +87,42 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
     setKickOffUser(user);
   };
 
-  useEffect(
-    () => {
-      const dealer = users?.find((user) => user.dealer);
-      setDealer(dealer);
-    },
-    [ users ],
-  );
+  const checkVoting = (userId: string, status: boolean) => {
+    const userFound = state.userId === userId;
+    if (userFound) {
+      setIsVoting(status);
+    }
+  };
+
+  const onConfirmNotAllowed = () => {
+    setIsNotAllowed(false);
+    router.push('/');
+  };
+
+  useEffect(() => {
+    const dealer = users?.find((user) => user.dealer);
+    setDealer(dealer);
+  }, [users]);
 
   useEffect(() => {
     state.socket.on('gameOver', (message) => {
       gameFinish(message);
     });
 
-    state.socket.on('gameStarted', (message) => {
-      gameStart();
+    state.socket.on('votingIsOn', (userId: string) => {
+      checkVoting(userId, true);
     });
-          
-    state.socket.emit('getGameData', { 
-      roomId: lobby,
-      user: { 
-        username: state.username,
-        userSurname: state.userSurname,
-        avatar: state.avatar,
-        id: state.userId,
-        userRole: state.userRole,
+
+    state.socket.on('votingIsOff', (userId: string) => {
+      checkVoting(userId, false);
+    });
+
+    state.socket.on('memberIsDeclined', (userId: string) => {
+      if (state.userId === userId) {
+        setIsNotAllowed(true);
       }
     });
 
-    state.socket.on('gameData', (message) => {
-    const { gameData } = message;
-    console.log('game DATA', gameData);
-    if(gameData && gameData.isStarted) {
-      setIsGameStarted(true);
-      setIsVoting(gameData.isVoting);
-      setIsAutoJoin(gameData.isAutoJoin); 
-    // state.socket.emit('isVotingStarted', { roomId: state.roomId });
-
-    // state.socket.on('votingStarted', (message) => {
-    //   console.log('LOBBY IS VOTING', message);
-    //   setIsVoting(message.voting);
-    // });
-
-    state.socket.on('votingIsOver', (message) => {
-      console.log('LOBBY VOTING IS OVER', message);
-      setIsVoting(message);
-    });
-
-
-     
-      if( !gameData.isVoting && gameData.isAutoJoin) {    
-        gameStart();
-      } if(!gameData.isAutoJoin) {    
-        state.socket.on('lateMemberMayJoin', (message) => {     
-            if( state.userId === message) {
-              gameStart();
-            }
-        }); 
-      }
-    }
-  
-    });
-
-    state.socket.on('memberIsDeclined', (message) => {   
-      if(state.userId === message) {
-        onRoomLeave();
-      }
-  });
-  
     state.socket.on('noQuorum', (message) => {
       userRemoveRejectPopup();
     });
@@ -163,26 +131,12 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
       userKickVoting(user);
     });
 
-    
-
     return () => {
       state.socket.off('gameOver', (message) => {
         gameFinish(message);
       });
 
-      state.socket.off('gameStarted', (message) => {
-        gameStart();
-      });
-
-      state.socket.off('gameData');
-
-      state.socket.off('lateMemberMayJoin');
-      
       state.socket.off('memberIsDeclined');
-
-      // state.socket.off('votingStarted');
-
-      // state.socket.off('isVotingStarted');
 
       state.socket.off('noQuorum', (message) => {
         userRemoveRejectPopup();
@@ -191,32 +145,41 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
       state.socket.off('kickConfirm', (user: IUser) => {
         userKickVoting(user);
       });
+
+      state.socket.off('votingIsOn', (userId: string) => {
+        checkVoting(userId, true);
+      });
+
+      state.socket.off('votingIsOff', (userId: string) => {
+        checkVoting(userId, false);
+      });
+
+      setIsVoting(false);
+      setIsNotAllowed(true);
     };
   }, []);
-
-  
 
   return (
     <Grid
       container
-      direction="column"
+      direction='column'
       item
       xs={12}
       md={9}
       sm={7}
       className={classes.lobbyPartUserContainer}
-      wrap="nowrap"
+      wrap='nowrap'
     >
       <Grid item>
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant='h4' align='center' gutterBottom>
           Lobby
         </Typography>
-        <Typography variant="h6" align="center" gutterBottom>
-          Sprint:{' '}{sprintName}{' '}(issues{' '}{issues && issues.join(', ')})
+        <Typography variant='h6' align='center' gutterBottom>
+          Sprint: {sprintName} (issues {issues && issues.join(', ')})
         </Typography>
       </Grid>
       <Grid item className={classes.mBottom}>
-        <Typography variant="subtitle2">Dealer:</Typography>
+        <Typography variant='subtitle2'>Dealer:</Typography>
         {dealer && (
           <UserCard
             user={dealer}
@@ -228,11 +191,11 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
       <Grid
         item
         container
-        justifyContent="flex-end"
+        justifyContent='flex-end'
         className={classes.mBottom}
       >
         <Button
-          variant="outlined"
+          variant='outlined'
           className={classes.btn}
           onClick={onRoomLeave}
         >
@@ -263,13 +226,13 @@ export const LobbyUser: FC<LobbyUserProps> = ({ users, sprintName, issues }) => 
         onCloseReject={rejectUserRemove}
         user={kickOffUser}
       />
-      { isGameStarted &&
-        (<WaitForAuthPopup
-          isGameStarted={isGameStarted}
-          isVoting={isVoting}
-          isAutoJoin={isAutoJoin}
-        /> )
-      }
+      {isVoting && <WaitForAuthPopup isVoting={isVoting} />}
+      {isNotAllowed && (
+        <PlayerNotAllowed
+          isNotAllowed={isNotAllowed}
+          onConfirmNotAllowed={onConfirmNotAllowed}
+        />
+      )}
     </Grid>
   );
 };

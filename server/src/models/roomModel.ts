@@ -10,6 +10,7 @@ import {
   IGameTimer,
   IKickUserVotes,
   IRoomInfo,
+  IGameStatus,
 } from './interfaces';
 
 const initKickUser = {
@@ -194,6 +195,14 @@ class Room {
     this.kickUserVotes.voted = 0;
     this.kickUserVotes.votes = 0;
   };
+
+  getGameStatus = (): IGameStatus => {
+    return this.game.getGameStatus();
+  }
+
+  addLatePlayer = (player: string): void => {
+    this.game.addLatePlayer(player);
+  }
 }
 
 export default Room;

@@ -9,6 +9,7 @@ import {
   IGameTimer,
   IKickUserVotes,
   IRoomInfo,
+  IGameStatus,
 } from '../models/interfaces';
 import Room from '../models/roomModel';
 
@@ -24,6 +25,13 @@ class Rooms {
 
   getRooms = (): Array<Room> => {
     return this.rooms;
+  };
+
+  getRoom = (roomId: string): IRoomInfo => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      return room.getRoom();
+    }
   };
 
   getRoomIds = (): Array<string> => {
@@ -88,7 +96,6 @@ class Rooms {
     return id;
   };
 
-  
   setGameUserChoice = (roomId: string, userChoice: IPlayerChoice): void => {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
     if (room) {
@@ -176,16 +183,16 @@ class Rooms {
     }
   };
 
-  setVoting = (roomId: string,  voting: boolean ): void => {
+  setVoting = (roomId: string, voting: boolean): void => {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
     if (room) {
       return room.setVoting(voting);
     }
   };
 
-  getIsVoting =(roomId: string): boolean => {
+  getIsVoting = (roomId: string): boolean => {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
-    if(room) {
+    if (room) {
       const isVoting = room.getIsVoting();
       return isVoting;
     }
@@ -216,6 +223,20 @@ class Rooms {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
     if (room) {
       return room.getKickUserVotesStatus();
+    }
+  };
+
+  getGameStatus = (roomId: string): IGameStatus => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      return room.getGameStatus();
+    }
+  };
+
+  addLatePlayer = (roomId: string, player: string): void => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      room.addLatePlayer(player);
     }
   };
 }

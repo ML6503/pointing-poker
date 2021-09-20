@@ -16,11 +16,16 @@ import {
 } from '../../store/actionCreators';
 import AppContext from 'store/store';
 import { roles, roomInitData, userInitData } from 'utils/configs';
-import { IDialogUsers, IRoomCreateData, IRoomData, IRoomInfo } from 'utils/interfaces';
+import {
+  IDialogUsers,
+  IRoomCreateData,
+  IRoomData,
+  IRoomInfo,
+} from 'utils/interfaces';
 import { UserDialog } from './Dialog/userDialog';
 import pokerImage from '../../public/poker-cards_green.png';
 import appStorage from 'utils/storage';
-import { apiCreateRoom } from 'services/apiServices';
+import { apiCreateRoom, apiGetRooms } from 'services/apiServices';
 
 interface MakeChoiceProps {
   rooms: Array<IRoomInfo>;
@@ -69,7 +74,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
       roomInfo.statusData
     ) {
       const id = nanoid();
-      setRoomInfo((prev) => ({...prev, room: { ...prev.room, roomId: id}}))
+      setRoomInfo((prev) => ({ ...prev, room: { ...prev.room, roomId: id } }));
       dispatch(setRoom(id, roomInfo.room.roomName));
 
       const config = {
@@ -138,6 +143,22 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
     setUserData((prev) => ({ ...prev, avatar: data }));
   };
 
+  const onRoomRequest = async () => {
+    try {
+      const res = await apiGetRooms();
+      const data = await res.data;
+      if( res.status === 200) {
+        if(typeof data === 'string') {
+          setRoomList([]);
+        } else {
+          setRoomList(data);
+        }
+      }
+    } catch {
+      setRoomList([]);
+    }
+  };
+
   useEffect(
     () => {
       if (role === roles.observer) {
@@ -164,7 +185,8 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
       const session = appStorage.getSession();
       state.socket.auth.userId = session;
     }
-    // state.socket.disconnect().connect();
+
+    onRoomRequest();
 
     state.socket.on('roomList', (message) => {
       onRoomList(message);
@@ -183,37 +205,37 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
       <div className={classes.container}>
         <Grid
           container
-          justifyContent="center"
-          alignItems="center"
+          justifyContent='center'
+          alignItems='center'
           className={classes.titleWrapper}
         >
           <Grid item>
             <Image src={pokerImage} data-testid="poker-image"/>
           </Grid>
           <Grid item>
-            <Typography variant="h3" align="center">
+            <Typography variant='h3' align='center'>
               Poker Planning
             </Typography>
           </Grid>
         </Grid>
 
-        <Typography variant="h4" align="center" className={classes.title}>
+        <Typography variant='h4' align='center' className={classes.title}>
           Start your planning:
         </Typography>
-        <Grid container justifyContent="center">
+        <Grid container justifyContent='center'>
           <Grid
             container
             item
-            alignItems="center"
-            justifyContent="center"
+            alignItems='center'
+            justifyContent='center'
             spacing={2}
             className={classes.choiceWrapper}
           >
             <Grid item className={classes.choiceContainer} />
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={() => {
                   setOpenCreate(true);
                   dispatch(setDealer(true));
@@ -247,8 +269,8 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
           <Grid
             container
             item
-            alignItems="center"
-            justifyContent="center"
+            alignItems='center'
+            justifyContent='center'
             spacing={2}
             className={classes.choiceWrapper}
           >
@@ -260,8 +282,8 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={() => {
                   setOpenConnect(true);
                 }}

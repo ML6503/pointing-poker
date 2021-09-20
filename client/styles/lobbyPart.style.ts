@@ -27,6 +27,15 @@ const useStylesLobbyPart = makeStyles((theme: Theme) =>
         paddingBottom: '20px',
       },
     },
+    error: {
+      color: 'red',
+      textAlign: 'center',
+      width: '100%'
+    },
+    errorWrapper: {
+      height: '21px',
+      width: '100%'
+    }
   }),
 );
 

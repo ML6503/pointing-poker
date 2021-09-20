@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router';
-import { FC, useEffect, useState, useContext } from 'react';
+import React, { FC, useEffect, useState, useContext } from 'react';
 import { Typography, Grid, Box, Button } from '@material-ui/core';
 import {
   IGameIssue,
   IGamePageIssue,
   IUser,
   IGameTimer,
+  ILatePlayer,
+  ILatePlayerToJoin,
 } from 'utils/interfaces';
 import { LateMemberAccess } from './Popups/lateMemberAccess';
 
@@ -18,6 +20,7 @@ import { Timer } from './Timer/timer';
 import { NewIssueGamePopup } from './Popups/newIssueGame';
 import { ChangeScoreGamePopup } from './Popups/changeScoreGame';
 import { DealerLeavePage } from './Popups/dealerLeavePage';
+import GameResultPopup from './Popups/gameResultsPopup';
 import clsx from 'clsx';
 
 interface GameDealerProps {
@@ -53,13 +56,15 @@ export const GameDealer: FC<GameDealerProps> = ({
   const router = useRouter();
   const { lobby } = router.query;
   const { state } = useContext(AppContext);
-  const [ title, setTitle ] = useState<string>();
-  const [ isOpen, setIsOpen ] = useState(false);
-  const [ requestToJoin, setRequestToJoin ] = useState(false);
-  const [ lateMember, setLateMember ] = useState<IUser>(null);
-  const [ isScoreOpen, setIsScoreOpen ] = useState(false);
-  const [ isLeaveOpen, setIsLeaveOpen ] = useState(false);
-  const btnHidden = clsx(timer && timer.isTimer ? classes.btnHidden : classes.mBottom);
+  const [title, setTitle] = useState<string>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [requestToJoin, setRequestToJoin] = useState(false);
+  const [lateMember, setLateMember] = useState<ILatePlayer>(null);
+  const [isScoreOpen, setIsScoreOpen] = useState(false);
+  const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const btnHidden = clsx(
+    timer && timer.isTimer ? classes.btnHidden : classes.mBottom,
+  );
 
   const onRoomLeave = () => {
     state.socket.emit('leaveGame', {
@@ -100,36 +105,20 @@ export const GameDealer: FC<GameDealerProps> = ({
     onChangeCloseIssue();
   };
 
-  const handleCloseDialog = () => {
-    setRequestToJoin(false);
-    setLateMember(null);
-  };
-
-  const onAllow = () => {
-    state.socket.emit('allowLateMemberIntoGame', {
-      roomId: lobby,
-      userId: lateMember.id,
+  const lateMemberToJoin = (data: ILatePlayerToJoin) => {
+    setLateMember({
+      userId: data.userId,
+      username: data.username,
+      userSurname: data.userSurname,
+      userRole: data.userRole,
     });
-    handleCloseDialog();
+    setRequestToJoin(true);
   };
 
-  const onRoomLeaveLateMember = () => {
-    state.socket.emit('declineLateMember', {
-      roomId: lobby,
-      userId: lateMember.id,
-    });
-    handleCloseDialog();
-  };
-
-  useEffect(
-    () => {
-      const newTitle = gameIssues
-        .map((item) => item.issue.issueName)
-        .join(', ');
-      setTitle(newTitle);
-    },
-    [ gameIssues ],
-  );
+  useEffect(() => {
+    const newTitle = gameIssues.map((item) => item.issue.issueName).join(', ');
+    setTitle(newTitle);
+  }, [gameIssues]);
 
   useEffect(() => {
     state.socket.on('gameOver', (message) => {
@@ -137,8 +126,11 @@ export const GameDealer: FC<GameDealerProps> = ({
     });
 
     state.socket.on('lateMemberAskToJoin', (message) => {
-      setLateMember(message);
       setRequestToJoin(true);
+    });
+
+    state.socket.on('latePlayerAskToJoin', (message) => {
+      lateMemberToJoin(message);
     });
 
     return () => {
@@ -150,15 +142,40 @@ export const GameDealer: FC<GameDealerProps> = ({
     };
   }, []);
 
+  const handleCloseDialog = () => {
+    setRequestToJoin(false);
+    setLateMember(null);
+  };
+
+  const onAllow = () => {
+    state.socket.emit('allowLatePlayerIntoGame', {
+      roomId: lobby,
+      user: lateMember,
+    });
+    handleCloseDialog();
+  };
+
+  const onRoomLeaveLateMember = () => {
+    state.socket.emit('declineLateMember', {
+      roomId: lobby,
+      userId: lateMember.userId,
+    });
+    handleCloseDialog();
+  };
+
+  const onLeaveRoomDealer = () => {
+    setIsLeaveOpen(true);
+  };
+
   return (
     <div>
-      <Typography variant="h6" align="center" gutterBottom>
-      Spring:{' '}{sprintTitle}{' '}planning (issues: {title})
+      <Typography variant='h6' align='center' gutterBottom>
+        Spring: {sprintTitle} planning (issues: {title})
       </Typography>
 
-      <Typography variant="subtitle2">Dealer:</Typography>
-      <Grid container direction="column">
-        <Grid container justifyContent="space-between" alignItems="flex-end">
+      <Typography variant='subtitle2'>Dealer:</Typography>
+      <Grid container direction='column'>
+        <Grid container justifyContent='space-between' alignItems='flex-end'>
           <Grid item className={classes.mBottom}>
             {dealer && (
               <UserCard
@@ -169,27 +186,22 @@ export const GameDealer: FC<GameDealerProps> = ({
             )}
           </Grid>
           <Grid item className={classes.mBottom}>
-            <Box boxShadow={2} mr={10}>
-              <Button
-                variant="outlined"
-                className={classes.btn}
-                onClick={() => setIsLeaveOpen(true)}
-              >
-                Stop Game
-              </Button>
-            </Box>
+            <GameResultPopup
+              onLeaveRoom={onLeaveRoomDealer}
+              gameIssues={gameIssues}
+            />
           </Grid>
-          <Grid container item justifyContent="space-between">
+          <Grid container item justifyContent='space-between'>
             <Grid
               container
               item
-              direction="column"
+              direction='column'
               className={classes.btnContainer}
             >
               <Grid item className={classes.mBottom}>
                 <Box boxShadow={2} mr={10}>
                   <Button
-                    variant="outlined"
+                    variant='outlined'
                     className={classes.btn}
                     onClick={onStartVoting}
                     disabled={voting}
@@ -201,7 +213,7 @@ export const GameDealer: FC<GameDealerProps> = ({
               <Grid item className={btnHidden}>
                 <Box boxShadow={2} mr={10}>
                   <Button
-                    variant="outlined"
+                    variant='outlined'
                     className={classes.btn}
                     onClick={calculateIssueScore}
                     disabled={!result}
@@ -213,8 +225,7 @@ export const GameDealer: FC<GameDealerProps> = ({
               </Grid>
             </Grid>
             <Grid item>
-              {timer &&
-              timer.isTimer && (
+              {timer && timer.isTimer && (
                 <Timer
                   timer={timer}
                   timeStarted={timeStarted}
@@ -258,8 +269,7 @@ export const GameDealer: FC<GameDealerProps> = ({
         />
       </Grid>
 
-      { !voting && requestToJoin &&
-      lateMember && (
+      {!voting && requestToJoin && lateMember && (
         <LateMemberAccess
           requestToJoin={requestToJoin}
           lateMember={lateMember}

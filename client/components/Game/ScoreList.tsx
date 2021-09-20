@@ -1,11 +1,10 @@
 import { Grid, Typography } from '@material-ui/core';
 import useStylesScoreList from '@styles/scoreList.style';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { roles } from 'utils/configs';
 import { IGamePageIssue, IGamePagePlayer, IUser } from 'utils/interfaces';
 import { ScoreCard } from './scoreCard';
 import { UserGameCard } from './userGameCard';
-import AppContext from 'store/store';
 
 interface ScoreListProps {
   users: Array<IUser>;
@@ -19,22 +18,21 @@ export const ScoreList: FC<ScoreListProps> = ({
   activeIssueName,
 }) => {
   const classes = useStylesScoreList();
-  const [ currentIssuePlayers, setCurrentIssuePlayers ] = useState<
+  const [currentIssuePlayers, setCurrentIssuePlayers] = useState<
     Array<IGamePagePlayer>
   >();
-  const { state } = useContext(AppContext);
 
   useEffect(
     () => {
       const newIssue = issues?.find(
         (issue) => issue.issue.issueName === activeIssueName,
       );
-      if(newIssue) {
+      if (newIssue) {
         setCurrentIssuePlayers(newIssue.players);
       }
-      
+
     },
-    [ issues ],
+    [issues],
   );
 
   return (
