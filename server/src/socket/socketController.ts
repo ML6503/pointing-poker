@@ -71,6 +71,7 @@ const socketServer = (httpServer) => {
           roomContoller.gameOver(roomId);
           io.in(roomId).emit('gameOver', 'The end');
         } else {
+          roomContoller.playerLeave(roomId, userId);
           roomContoller.leaveUserFromRoom(roomId, userId);
           users = roomContoller.getRoomUsers(roomId);
           socket.to(roomId).emit('userLeft', users);
@@ -172,11 +173,20 @@ const socketServer = (httpServer) => {
       const room = roomContoller.getRoom(roomId);
 
       if (gameStatus) {
-        if (gameStatus.isAutoJoin) {
+        if (gameStatus.isAutoJoin && !gameStatus.isVoting) {
           if (userRole === 'member') {
             roomContoller.addLatePlayer(roomId, userId);
           }
           socket.emit('allowToAutoJoin', { room, userId });
+        } else if (gameStatus.isAutoJoin && gameStatus.isVoting) {
+          socket.to(roomId).emit('allowToAutoJoinGame', {
+            room,
+            userId,
+            username,
+            userSurname,
+            userRole,
+          });
+          socket.emit('votingIsOn', userId);
         } else if (gameStatus.isStarted) {
           socket.to(roomId).emit('latePlayerAskToJoin', {
             room,

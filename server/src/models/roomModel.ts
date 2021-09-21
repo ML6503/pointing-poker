@@ -39,7 +39,7 @@ class Room {
   };
 
   getRoom = (): IRoomInfo | null => {
-    if (this.roomId) return {roomId: this.roomId, roomName: this.roomName};
+    if (this.roomId) return { roomId: this.roomId, roomName: this.roomName };
     return null;
   };
 
@@ -104,7 +104,7 @@ class Room {
     this.game.setPlayerChoice(userChoice);
   };
 
-  setVoting = ( voting: boolean ) => {
+  setVoting = (voting: boolean) => {
     this.game.setVoting(voting);
   };
 
@@ -164,7 +164,6 @@ class Room {
     this.game.addNewIssue(issue, playerIds);
   };
 
-  
   getTimer = (): IGameTimer => {
     const timer = this.game.getTimer();
     if (timer) return timer;
@@ -198,11 +197,15 @@ class Room {
 
   getGameStatus = (): IGameStatus => {
     return this.game.getGameStatus();
-  }
+  };
 
   addLatePlayer = (player: string): void => {
     this.game.addLatePlayer(player);
-  }
+  };
+
+  playerLeave = (player: string): void => {
+    this.game.playerLeave(player);
+  };
 }
 
 export default Room;
