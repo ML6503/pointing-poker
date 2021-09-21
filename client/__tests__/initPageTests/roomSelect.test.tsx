@@ -6,13 +6,20 @@
 import * as React from "react";
 export * from '@testing-library/react';
 
-import { fireEvent } from "@testing-library/react";
+import { fireEvent, within, cleanup, } from "@testing-library/react";
 import { render, screen } from '../../test-utils';
 
 
 import { RoomSelect } from '../../components/InitPage/roomSelect';
 import { IRoomCreateData, IRoomInfo } from "utils/interfaces";
 
+beforeEach(() => {
+    jest.resetAllMocks();
+  });
+  
+  afterEach(() => {
+    cleanup();
+  });
 
 interface RoomSelectProps {
     rooms: Array<IRoomInfo>;
@@ -20,7 +27,7 @@ interface RoomSelectProps {
     onRoomSelect: () => void;
   }
   
-describe.skip('RoomsSelect element from Init Page', () => {
+describe('RoomsSelect element from Init Page', () => {
     // let  expectedProps: RoomSelectProps;
     let  expectedProps;
     beforeEach(() => {
@@ -38,21 +45,24 @@ describe.skip('RoomsSelect element from Init Page', () => {
             onRoomSelect: jest.fn()
         };
     });
-    test('should render label name and select input', async () => {        
+    test('should render label name and select input', () => {        
         
-        const { findByTestId, findByText } = render(<RoomSelect {...expectedProps} />);
-        const roomSelectInputLabel = await screen.findByText('Select Room');
-        const roomSelectInput = await screen.findByTestId("room-select-input");
+        const { getByTestId, getByText } = render(<RoomSelect {...expectedProps} />);
+        const roomSelectInputLabel = getByText('Select Room');
+        const roomSelectInput = getByTestId("room-select-input");
         expect(roomSelectInputLabel).toBeVisible();
-        expect(roomSelectInput).toBe('');
+        expect(roomSelectInput).toBeEmptyDOMElement();
         
     });
     test('should render existed rooms names on select input click', () => {        
         
-        const { getByTestId } = render(<RoomSelect {...expectedProps} />);
+        const { getByTestId, getByRole } = render(<RoomSelect {...expectedProps} />);
        
         const roomSelectInput = getByTestId("room-select-input");
-        fireEvent.click(roomSelectInput);
-        expect(roomSelectInput).toBe([expectedProps.rooms[0].roomId, expectedProps.rooms[1].roomId]);
+        fireEvent.mouseDown(getByRole('button'));
+        const listbox = within(getByRole('listbox'));
+        // expect(listbox).toBe([expectedProps.rooms[0].roomId, expectedProps.rooms[1].roomId]);
+        fireEvent.click(listbox.getByText(expectedProps.rooms[1].roomId));
+        expect(roomSelectInput).toHaveValue(expectedProps.rooms[1].roomName);
     });
 });
