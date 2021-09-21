@@ -9,7 +9,7 @@ const httpServer = createServer(app);
 app.use(cors());
 
 socketServer(httpServer);
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
@@ -76,5 +76,5 @@ app.post('/gamestart/:room', (req, res) => {
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

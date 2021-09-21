@@ -217,6 +217,10 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       onIssuesChange(message);
     });
 
+    state.socket.on('gameStarted', () => {
+      router.push(`/${lobby}/game`);
+    });
+
     return () => {
       state.socket.off('joinToLobby', (message) => {
         onLobbyEntrance(message);
@@ -246,6 +250,8 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       state.socket.off('issuesLobbyChanged', (message) => {
         onIssuesChange(message);
       });
+
+      state.socket.off('gameStarted', () => {});
 
       setUsers([]);
       setChatMessages([]);
