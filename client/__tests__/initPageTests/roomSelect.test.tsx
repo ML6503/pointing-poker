@@ -6,7 +6,7 @@
 import * as React from "react";
 export * from '@testing-library/react';
 
-import { fireEvent, within, cleanup, } from "@testing-library/react";
+import { fireEvent, within, cleanup, waitForElementToBeRemoved, } from "@testing-library/react";
 import { render, screen } from '../../test-utils';
 
 
@@ -23,13 +23,12 @@ beforeEach(() => {
 
 interface RoomSelectProps {
     rooms: Array<IRoomInfo>;
-    // onRoomSelect: (room: IRoomCreateData) => void;
-    onRoomSelect: () => void;
+    onRoomSelect: (room: IRoomCreateData) => void;    
   }
   
 describe('RoomsSelect element from Init Page', () => {
     // let  expectedProps: RoomSelectProps;
-    let  expectedProps;
+    let  expectedProps: RoomSelectProps;
     beforeEach(() => {
         expectedProps = {
             rooms: [
@@ -45,24 +44,37 @@ describe('RoomsSelect element from Init Page', () => {
             onRoomSelect: jest.fn()
         };
     });
+
     test('should render label name and select input', () => {        
         
         const { getByTestId, getByText } = render(<RoomSelect {...expectedProps} />);
         const roomSelectInputLabel = getByText('Select Room');
         const roomSelectInput = getByTestId("room-select-input");
         expect(roomSelectInputLabel).toBeVisible();
-        expect(roomSelectInput).toBeEmptyDOMElement();
+        expect(roomSelectInput ).toBeVisible();    
         
     });
-    test('should render existed rooms names on select input click', () => {        
-        
-        const { getByTestId, getByRole } = render(<RoomSelect {...expectedProps} />);
+    
+    test('should render existed rooms names on select input click', async () => {        
+       
+        const { getByTestId, getByRole, getByText } = render(<RoomSelect {...expectedProps} />);
        
         const roomSelectInput = getByTestId("room-select-input");
         fireEvent.mouseDown(getByRole('button'));
         const listbox = within(getByRole('listbox'));
         // expect(listbox).toBe([expectedProps.rooms[0].roomId, expectedProps.rooms[1].roomId]);
-        fireEvent.click(listbox.getByText(expectedProps.rooms[1].roomId));
-        expect(roomSelectInput).toHaveValue(expectedProps.rooms[1].roomName);
+        fireEvent.click(listbox.getByText(expectedProps.rooms[1].roomName));
+        // expect(roomSelectInput).toHaveValue(expectedProps.rooms[1].roomName);
+         // Close the select using Escape or Tab or clicking away
+        fireEvent.keyDown(document.activeElement, {
+            key: "Escape",
+            code: "Escape"
+          });
+           // Wait for Menu to close
+        await waitForElementToBeRemoved(getByText("None"));
+        // Verify selections
+        expect(roomSelectInput).toHaveTextContent(
+            expectedProps.rooms[1].roomName
+        );
     });
 });
