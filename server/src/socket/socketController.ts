@@ -14,13 +14,16 @@ import roomContoller from '../roomServices/roomController';
 const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: process.env.SOCKET_URL_CONNECTION,
+      // origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
       allowedHeaders: ['my-custom-header'],
       credentials: true,
     },
   });
 console.log('URL', process.env.SOCKET_URL_CONNECTION);
+console.log('PORT', process.env.PORT);
+
 
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);

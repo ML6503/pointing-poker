@@ -184,11 +184,6 @@ export const GameDealer: FC<GameDealerProps> = ({
   }, [lateMembers, autoJoin, voting]);
 
   useEffect(() => {
-    console.log('voiting', voting);
-    console.log('requestToJoin', requestToJoin);
-    console.log('lateMembers.length', lateMembers.length);
-    console.log('joined', joined);
-
     if (!voting && requestToJoin) {
       if (lateMembers.length && joined) {
         setJoined(false);
