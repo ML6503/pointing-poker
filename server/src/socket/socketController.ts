@@ -20,6 +20,7 @@ const socketServer = (httpServer) => {
       credentials: true,
     },
   });
+console.log('URL', process.env.SOCKET_URL_CONNECTION);
 
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);
@@ -81,7 +82,7 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('startGame', (message: { roomId: string }) => {
-      socket.to(message.roomId).emit('gameStarted');
+      io.in(message.roomId).emit('gameStarted');
     });
 
     socket.on('gameCardChoice', (message: socketRoomPlayerChoiceInward) => {
