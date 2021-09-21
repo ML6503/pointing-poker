@@ -42,7 +42,7 @@ export interface IGamePlayer {
   choice: number;
 }
 
-export interface IGameIssueScore {
+export interface IGameIssueScore  {
   choice: number;
   ratio: number;
 }

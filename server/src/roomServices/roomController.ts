@@ -239,6 +239,13 @@ class Rooms {
       room.addLatePlayer(player);
     }
   };
+
+  playerLeave = (roomId: string, player: string): void => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      room.playerLeave(player);
+    }
+  }
 }
 
 const roomContoller = new Rooms();
