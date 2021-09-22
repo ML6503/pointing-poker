@@ -21,9 +21,8 @@ const socketServer = (httpServer) => {
       credentials: true,
     },
   });
-console.log('URL', process.env.SOCKET_URL_CONNECTION);
-console.log('PORT', process.env.PORT);
-
+  console.log('URL', process.env.SOCKET_URL_CONNECTION);
+  console.log('PORT', process.env.PORT);
 
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);
@@ -74,6 +73,8 @@ console.log('PORT', process.env.PORT);
         if (userDealer && userDealer.dealer) {
           roomContoller.gameOver(roomId);
           io.in(roomId).emit('gameOver', 'The end');
+          const rooms = roomContoller.getRoomsInfo();
+          socket.broadcast.emit('roomList', rooms);
         } else {
           roomContoller.playerLeave(roomId, userId);
           roomContoller.leaveUserFromRoom(roomId, userId);
@@ -139,6 +140,8 @@ console.log('PORT', process.env.PORT);
       const { roomId } = message;
       roomContoller.gameOver(roomId);
       io.in(roomId).emit('gameOver', 'The end');
+      const rooms = roomContoller.getRoomsInfo();
+      socket.broadcast.emit('roomList', rooms);
     });
 
     socket.on('gameOverFinish', (message: { roomId: string }) => {
