@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IGamePageIssue } from 'utils/interfaces';
+import { nanoid } from 'nanoid';
 
 interface IGameResultsTableProps {
   issues: IGamePageIssue[];
@@ -23,7 +24,7 @@ const GameResultTable: FC<IGameResultsTableProps> = ({ issues }) => {
             <TableCell align="center">Priority&nbsp;</TableCell>
             <TableCell align="center">Description&nbsp;</TableCell>
             <TableCell align="center">Score&nbsp;</TableCell>
-            <TableCell align="center">Ratio&nbsp;</TableCell>
+            <TableCell align="center">Voted&nbsp;</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -36,7 +37,9 @@ const GameResultTable: FC<IGameResultsTableProps> = ({ issues }) => {
               <TableCell align="center">{item.issue.priority}</TableCell>
               <TableCell align="center">{item.issue.issueDescription}</TableCell>
               <TableCell align="center">{item.totalScore}</TableCell>
-              <TableCell align="center">{item.score[0] ? item.score[0].ratio : '0'}</TableCell>
+              {item.score.map((score) => {
+                return <TableRow key={nanoid()}>{`Choice ${score.choice} - Ratio ${score.ratio}`}</TableRow>
+              })}
             </TableRow>
           ))}
         </TableBody>
