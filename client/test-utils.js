@@ -1,3 +1,10 @@
+// fix the setImmediate usage for jest
+import 'setimmediate';
+
+if (!global.setImmediate) {
+  global.setImmediate = setTimeout
+};
+
 import { useReducer } from 'react';
 import { render } from "@testing-library/react";
 // import '@testing-library/jest-dom';
@@ -25,6 +32,7 @@ socketIo.disconnect().connect();
 
 const initialValues = {
   socket: socketIo,
+  // socket: jest.fn(),
   userId: 'jkfl_5HJ',
   username: 'TestName',
   userSurname: 'TestSurname',

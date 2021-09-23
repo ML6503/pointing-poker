@@ -62,9 +62,8 @@ describe('RoomsSelect element from Init Page', () => {
         const roomSelectInput = getByTestId("room-select-input");
         fireEvent.mouseDown(getByRole('button'));
         const listbox = within(getByRole('listbox'));
-        // expect(listbox).toBe([expectedProps.rooms[0].roomId, expectedProps.rooms[1].roomId]);
         fireEvent.click(listbox.getByText(expectedProps.rooms[1].roomName));
-        // expect(roomSelectInput).toHaveValue(expectedProps.rooms[1].roomName);
+        
          // Close the select using Escape or Tab or clicking away
         fireEvent.keyDown(document.activeElement, {
             key: "Escape",
