@@ -261,8 +261,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                 addAvatar={addAvatar}
                 userInfo={userData}
                 roomInfo={roomInfo}
-                newGame={true}
-                data-testid="create-new-game-dialog"
+                newGame={true}                
               />
             </Grid>
           </Grid>
