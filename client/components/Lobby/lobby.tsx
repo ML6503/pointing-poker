@@ -34,15 +34,13 @@ interface LobbyProps {
 const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
   const classes = useStylesLobby();
   const [chatMessages, setChatMessages] = useState<Array<IChatMessage>>();
-  const [users, setUsers] = useState<Array<IUser>>();
+  const [users, setUsers] = useState<Array<IUser>>([]);
   const { state, dispatch } = useContext(AppContext);
   const router = useRouter();
   const { lobby } = router.query;
   const [sprintName, setSprintName] = useState('');
   const [issues, setIssues] = useState<Array<string>>();
   const [errorPage, setErrorPage] = useState(false);
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isVoting, setIsVoting] = useState(false);
   const [isAutoJoin, setIsAutoJoin] = useState(false);
 
   const onUserJoinLeave = (users: Array<IUser>) => {
@@ -99,22 +97,38 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
   const onLobbyInfoRequest = async (room: string | Array<string>) => {
     try {
       const users = await apiGetLobbyUsers(room);
-      const userData = await users.data;
+      const userData = (await users.data) as Array<IUser> | string;
 
       const chat = await apiGetLobbyChats(room);
       const chatData = await chat.data;
 
       if (users.status === 200 && chat.status === 200) {
-        if (typeof users.data === 'string') {
+        if (typeof userData === 'string') {
           setUsers([]);
           setChatMessages([]);
           if (!state.dealer) {
             setErrorPage(true);
           }
         } else {
-          setUsers(userData);
-          setChatMessages(chatData);
-          setErrorPage(false);
+          const selfDealer = userData.find(
+            (user) => user.id === state.userId && user.dealer === true,
+          );
+          const hasDealer = !!userData.find((user) => user.dealer === true);
+          if (selfDealer) {
+            setUsers([]);
+            setChatMessages([]);
+            setErrorPage(true);
+            state.socket.emit('abandonedRoom', lobby);
+          } else if (!selfDealer && !hasDealer) {
+            setUsers([]);
+            setChatMessages([]);
+            setErrorPage(true);
+            state.socket.emit('abandonedRoom', lobby);
+          } else {
+            setUsers(userData);
+            setChatMessages(chatData);
+            setErrorPage(false);
+          }
         }
 
         if (!state.username) {

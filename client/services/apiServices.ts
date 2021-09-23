@@ -1,13 +1,10 @@
 import axios from 'axios';
-import { BASE_URL } from 'utils/apiConfig';
 import {
   IGameSettings,
   IRoomInfo,
 } from 'utils/interfaces';
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
-// axios.defaults.withCredentials = true;
-console.log('ENV', process.env.NEXT_PUBLIC_SERVER_BASE_URL);
 
 export const apiGetLobbyUsers = async (room: string | Array<string>) => {
   if (typeof room === 'string') {
