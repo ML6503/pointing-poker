@@ -127,6 +127,7 @@ export const DialogInputBlock: FC<DialogInputBlockProps> = ({
           onChange={(e) => onChangeInput(e)}
           error={roomNameError}
           helperText={roomNameErrorInfo}
+          data-testid="room-create-input"
         />
         )}
       </DialogContent>
