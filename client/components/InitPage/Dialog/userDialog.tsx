@@ -93,7 +93,7 @@ export const UserDialog: FC<UserDialogProps> = ({
           <Button onClick={onDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={confirm} color="primary">
+          <Button onClick={confirm} color="primary" data-testid="confirm-new-room-create-btn">
             Confirm
           </Button>
         </DialogActions>

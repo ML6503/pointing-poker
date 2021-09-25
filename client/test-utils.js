@@ -17,7 +17,7 @@ import { appReducer } from 'store/reducer';
 import { io, Socket } from 'socket.io-client';
 import { BASE_URL } from 'utils/apiConfig';
 
-const socketIo = io(BASE_URL, {
+export const socketIo = io(BASE_URL, {
   withCredentials: true,
   auth: {
     userId: '',
@@ -29,6 +29,7 @@ const socketIo = io(BASE_URL, {
 
 socketIo.on('connect', () => {});
 socketIo.disconnect().connect();
+// socketIo.disconnect();
 
 const initialValues = {
   socket: socketIo,
@@ -37,7 +38,7 @@ const initialValues = {
   username: 'TestName',
   userSurname: 'TestSurname',
   avatar: '',
-  roomId: 'fo_rt99FF',
+  roomId: 'jkjgh5df2FD',
   roomName: 'TestRoom',
   userRole: 'member',
   dealer: false,

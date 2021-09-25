@@ -5,20 +5,20 @@
 // import '@testing-library/jest-dom';
 import * as React from "react";
 export * from '@testing-library/react';
-import { useRouter } from 'next/router';
-import { fireEvent, cleanup, within, waitForElementToBeRemoved } from "@testing-library/react";
-import { render, screen } from '../../test-utils';
+import { fireEvent, cleanup, within, waitFor } from "@testing-library/react";
+import { render, socketIo } from '../../test-utils';
 import { InitPage } from '../../components/InitPage/initPage';
-
-
-
-// jest.mock('next/router/');
 
 afterEach(() => {
     cleanup();
-    jest.clearAllMocks();
+    jest.clearAllMocks();   
   });
 
+  
+afterAll(() => {
+    socketIo.close();
+    
+  });
 
 jest.mock('next/image', () => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -28,7 +28,6 @@ jest.mock('next/image', () => ({
       return <img {...props} />
     },
   }));
-  
 
 describe('init page elements', () => {
     
@@ -38,7 +37,7 @@ describe('init page elements', () => {
       });
 
 
-    it('renders default state', () => {
+    it('renders default state', async () => {
         const rooms = []
         const { getByTestId, queryAllByTestId } = render(<InitPage rooms={ rooms } />);
 
@@ -46,22 +45,26 @@ describe('init page elements', () => {
         expect(pokerImg).toBeVisible();
 
         const startGameBtn = getByTestId("start-new-game-btn");
-        const userDialog = queryAllByTestId("user-dialog");
+        // const userDialog = await queryAllByTestId("user-dialog");
         const roomConnectBtn = getByTestId("room-connect-btn");
         const roomSelectInput = getByTestId("room-select-input");   
 
         expect(startGameBtn).toBeInTheDocument();
-        expect(userDialog).toHaveLength(0);
+        // expect(userDialog).toHaveLength(0);
         expect(roomConnectBtn).toBeInTheDocument();
         expect(roomSelectInput).toBeVisible();
+        await expect(async () => {
+            await waitFor(
+                () => expect (getByTestId("user-dialog")).toBeInTheDocument()
+            );
+        }).rejects.toEqual(expect.anything());
     });
 
-    it('Start new game btn click opens user dealer dialog with room creation', async () => {        
+    it('Start new game btn click opens user dealer dialog with room creation', async () => {       
         const rooms = [];
 
         const { getByTestId, findByTestId, findAllByTestId } = render(<InitPage rooms={ rooms } />);
        
-        
         // click on the relevant buton  
         const roomCreateBtn = getByTestId("start-new-game-btn");
         fireEvent.click(roomCreateBtn);
