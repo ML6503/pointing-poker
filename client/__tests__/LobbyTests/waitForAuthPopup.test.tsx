@@ -14,9 +14,6 @@ describe('WaitForAuthPopup element renders all inner elements', () => {
 
         const dialogTitle = getByText('Please wait for authorization');
         expect(dialogTitle).toBeVisible();
-
-        // const dialogText = getByText('voting in process.');
-        // expect(dialogText).toBeVisible();
        
     });
 
@@ -24,8 +21,7 @@ describe('WaitForAuthPopup element renders all inner elements', () => {
 
 describe('WaitForAuthPopup is not beeing rendered when Game is not started elements', () => {
     it('no popup', () => {
-        const { queryByText } = render(<WaitForAuthPopup isVoting={false}  />);
-        // expect(queryByText('voting in process.')).not.toBeInTheDocument();
+        const { queryByText } = render(<WaitForAuthPopup isVoting={false}  />);       
         expect(queryByText('Please wait for authorization')).not.toBeInTheDocument();
        
     });

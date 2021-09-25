@@ -6,7 +6,7 @@
 import * as React from "react";
 export * from '@testing-library/react';
 import { fireEvent, cleanup, within, waitFor } from "@testing-library/react";
-import { render, socketIo } from '../../test-utils';
+import { render } from '../../test-utils';
 import { InitPage } from '../../components/InitPage/initPage';
 
 afterEach(() => {
@@ -14,11 +14,6 @@ afterEach(() => {
     jest.clearAllMocks();   
   });
 
-  
-afterAll(() => {
-    socketIo.close();
-    
-  });
 
 jest.mock('next/image', () => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention

@@ -8,7 +8,6 @@ if (!global.setImmediate) {
 import { useReducer } from 'react';
 import { render } from "@testing-library/react";
 // import '@testing-library/jest-dom';
-import 'mutationobserver-shim';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './styles/theme';
 import AppContext, { appStore } from 'store/store';
@@ -28,12 +27,41 @@ export const socketIo = io(BASE_URL, {
 });
 
 socketIo.on('connect', () => {});
-socketIo.disconnect().connect();
-// socketIo.disconnect();
+// socketIo.disconnect().connect();
+
+if (process.env.NODE_ENV === 'test') {
+  socketIo.disconnect();
+  socketIo.close();
+  socketIo.off('connect', () => {});
+
+}
+
+afterAll( () => socketIo.disconnect());
+
+// jest.mock('socket.io-client', () => {
+//   const mSocket = {
+//     emit: jest.fn(),
+//   };
+//   return jest.fn(() => mSocket);
+// });
+
+// const ENDPOINT = 'localhost:5000';
+//     const mockSocket = io(ENDPOINT, {
+//         withCredentials: true,
+//         auth: {
+//           userId: '',
+//         },
+//         extraHeaders: {
+//           'my-custom-header': 'abcd',
+//         },
+//       });
+
+//     mockSocket.on('connect', () => {});
+//     afterAll(() => mockSocket.close());
 
 const initialValues = {
+  // socket: mockSocket,
   socket: socketIo,
-  // socket: jest.fn(),
   userId: 'jkfl_5HJ',
   username: 'TestName',
   userSurname: 'TestSurname',
