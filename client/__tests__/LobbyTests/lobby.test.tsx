@@ -6,17 +6,25 @@
 import * as React from "react";
 export * from '@testing-library/react';
 import { fireEvent, cleanup, within, waitFor } from "@testing-library/react";
+import { render, screen } from '../../test-utils';
+jest.mock('next/router', () => ({
+  useRouter: jest.fn().mockImplementation(() => ({
+    query: {
+      lobby: 'dkfsl_F5ddd',
+    },
+    route: '/mockedRoomId',
+    pathname: '/[lobby]',
+    beforePopState: require('next/router'),
+  })),
+}));
 
-import { render } from '../../test-utils';
 import Lobby from '../../components/Lobby/lobby';
 
 
 afterEach(() => {
     cleanup();
     jest.clearAllMocks();   
-  });
-
-  
+});
 
 
 jest.mock('next/image', () => ({
@@ -28,26 +36,23 @@ jest.mock('next/image', () => ({
     },
   }));
 
-  jest.mock('next/router');
 
 
-const useRouter = jest.spyOn(require('next/router'), 'useRouter');
+describe.skip('Lobby page tests', () => {
+  // const mockReplace = jest.fn()
+  // const mockedRoomId = 'JolH-PxZl2-e9RLsuyc-9';
+  // useRouter.mockImplementationOnce(() => ({
+  //   query: { lobby: mockedRoomId },
+  //   route: '/mockedRoomId',
+  //   pathname: '/[lobby]',
+  //   replace: mockReplace,
+  // }));
 
-describe.skip('Lobby tests', () => {
-  const mockReplace = jest.fn()
-  const mockedRoomId = 'jkjgh5df2FD';
-  useRouter.mockImplementationOnce(() => ({
-    query: { lobby: mockedRoomId },
-    route: '/lobby/mockedRoomId',
-    pathname: '/[lobby]',
-    replace: mockReplace,
-  }));
-
-    it("should render Lobby", () => {
+    it("should render Lobby", async () => {
 
       const user = {
-        username: 'asd_fffA',
-        userSurname: 'test Surname',
+        username: 'Test Name',
+        userSurname: 'Test Surname',
         avatar: '',
         id: 'ffd_ddd23L',
         userRole: 'member',
@@ -59,7 +64,8 @@ describe.skip('Lobby tests', () => {
           users: [user],
           error: '',
         }
-        render(<Lobby lobbyInfo={ lobbyInfo } />);
+    
+      render(<Lobby lobbyInfo={ lobbyInfo } />);
       });
 
  

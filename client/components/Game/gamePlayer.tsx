@@ -72,9 +72,9 @@ export const GamePlayer: FC<GameDealerProps> = ({
   }, []);
 
   return (
-    <>
+    <div data-testid="game-player">
       <Typography variant="h6" align="center" gutterBottom>
-        Spring:{' '}{sprintTitle}{' '}planning (issues: {title})
+        Sprint:{' '}{sprintTitle}{' '}planning (issues: {title})
       </Typography>
 
       <Typography variant="subtitle2">Dealer:</Typography>
@@ -117,6 +117,6 @@ export const GamePlayer: FC<GameDealerProps> = ({
           />
         )}
       </Grid>
-    </>
+    </div>
   );
 };
