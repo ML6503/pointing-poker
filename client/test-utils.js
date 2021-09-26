@@ -66,7 +66,7 @@ const initialValues = {
   username: 'TestName',
   userSurname: 'TestSurname',
   avatar: '',
-  roomId: 'jkjgh5df2FD',
+  roomId: 'JolH-PxZl2-e9RLsuyc-9',
   roomName: 'TestRoom',
   userRole: 'member',
   dealer: false,

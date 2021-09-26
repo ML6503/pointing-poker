@@ -39,7 +39,7 @@ module.exports = {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/pages/(.*)$': '<rootDir>/pages/$1',
     '^@styles/(.*)$': '<rootDir>/styles/$1',
-    // '(.*)': '<rootDir>/$1'
+    "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
   },
   moduleDirectories: ['node_modules', '<rootDir>'],
 }
