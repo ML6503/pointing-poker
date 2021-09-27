@@ -1,5 +1,4 @@
-import { act,  fireEvent,  waitFor } from '@testing-library/react';
-import { screen, render } from '../../test-utils';
+import { render } from '../../__mocks__/test-utils';
 import { mockedGamePlayerProps } from '__mocks__/mockedData';
 
 jest.mock('next/router', () => ({

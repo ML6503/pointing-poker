@@ -2,12 +2,11 @@
  * @jest-environment jsdom
  */
 
-// import '@testing-library/jest-dom';
 import * as React from "react";
 export * from '@testing-library/react';
 
-import { fireEvent, within, cleanup, waitForElementToBeRemoved } from "@testing-library/react";
-import { render, screen } from '../../test-utils';
+import { fireEvent, within, waitForElementToBeRemoved } from "@testing-library/react";
+import { render } from '../../__mocks__/test-utils';
 import IssueList  from '../../components/Lobby/issueList';
 import { mockIssuesProps } from "__mocks__/mockedData";
 

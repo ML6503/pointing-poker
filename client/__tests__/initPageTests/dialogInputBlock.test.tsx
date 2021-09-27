@@ -6,8 +6,8 @@
 import * as React from "react";
 export * from '@testing-library/react';
 
-import { fireEvent, within, cleanup, waitForElementToBeRemoved, } from "@testing-library/react";
-import { render, screen } from '../../test-utils';
+import { fireEvent, within, cleanup  } from "@testing-library/react";
+import { render, act } from '../../__mocks__/test-utils';
 
 import { DialogInputBlock } from '../../components/InitPage/Dialog/dialogInputBlock';
 import { IDialogUsers, IRoomCreateData } from 'utils/interfaces';
@@ -17,8 +17,8 @@ beforeEach(() => {
     jest.resetAllMocks();
   });
   
-  afterEach(() => {
-    cleanup();
+  afterEach( () => {
+    cleanup();   
   });
 
   interface DialogInputBlockProps {
@@ -48,8 +48,8 @@ describe('DialogInputBlock element from Init Page tests', () => {
             newGame: true,
         };
     });
-
-    test('should render 3 text inputs', () => {        
+  
+    test('should render 3 text inputs', async () => {        
         
         const { getByTestId } = render(<DialogInputBlock {...expectedProps} />);
         
@@ -58,7 +58,8 @@ describe('DialogInputBlock element from Init Page tests', () => {
         const nameCreateInput = getByTestId("name-create-input");       
         expect(nameCreateInput).toBeVisible();
         const surnameCreateInput = getByTestId('surname-create-input');
-        expect(surnameCreateInput).toBeVisible();    
+        expect(surnameCreateInput).toBeVisible();
+       
     });
     
     test('should allow new names in inputs', () => {        
@@ -77,6 +78,6 @@ describe('DialogInputBlock element from Init Page tests', () => {
       
         expect(roomCreateInput).toHaveValue('Breaze');
         expect(nameCreateInput).toHaveValue('John');
-        expect(surnameCreateInput).toHaveValue('Smith');
+        expect(surnameCreateInput).toHaveValue('Smith');        
     });
 });

@@ -1,6 +1,6 @@
-import { act,  waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { getPage } from 'next-page-tester';
-import { screen } from '../../test-utils';
+import { screen } from '../../__mocks__/test-utils';
 
 jest.mock('next/image', () => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -10,12 +10,14 @@ jest.mock('next/image', () => ({
       return <img {...props} />
     },
   }));
-  
+
   afterAll(async () => {
     await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
+
   });
 
 describe('pages rendering', () => {
+  
   it(' renders Lobby page', async () => {
     const mockedId = 'RYhJNxUhsXuxvuj84WwMJ';
     const { render } =  await getPage({
@@ -35,9 +37,8 @@ describe('pages rendering', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Lobby')).toBeInTheDocument();
-    });
-    
-    
+    }); 
+
   });
 
   it('prevents to render Game page on link without data from server passed via sockets', async () => {

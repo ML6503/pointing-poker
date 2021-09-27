@@ -1,6 +1,6 @@
 import { act,  waitFor } from '@testing-library/react';
 import { getPage } from 'next-page-tester';
-import { screen } from '../../test-utils';
+import { screen } from '../../__mocks__/test-utils';
 
 jest.mock('next/image', () => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention

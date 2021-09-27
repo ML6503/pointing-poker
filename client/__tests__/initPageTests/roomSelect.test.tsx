@@ -7,7 +7,7 @@ import * as React from "react";
 export * from '@testing-library/react';
 
 import { fireEvent, within, cleanup, waitForElementToBeRemoved, } from "@testing-library/react";
-import { render, screen } from '../../test-utils';
+import { render, screen } from '../../__mocks__/test-utils';
 
 
 import { RoomSelect } from '../../components/InitPage/roomSelect';

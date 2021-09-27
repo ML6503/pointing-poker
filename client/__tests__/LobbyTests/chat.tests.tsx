@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { render } from '../../test-utils';
+import { render } from '../../__mocks__/test-utils';
 import {within } from "@testing-library/react";;
 import { Chat } from '@/components/Chat/chat';
 import { chatProps } from '__mocks__/mockedData';

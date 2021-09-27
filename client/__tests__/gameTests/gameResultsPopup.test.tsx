@@ -3,7 +3,7 @@
  */
 import * as React from "react";
 export * from '@testing-library/react';
-import { render } from '../../test-utils';
+import { render } from '../../__mocks__/test-utils';
 
 import GameResultsPopup from '../../components/Game/Popups/gameResultsPopup';
 import { mockedGameIssues } from "__mocks__/mockedData";
@@ -28,7 +28,7 @@ describe('GameResultsPopup component tests', () => {
     });
 
 
-    it('no popup if Game Btn is not click', () => {
+    it('no popup if Game Btn is not clicked', () => {
         const { queryByText } = render(<GameResultsPopup {...gameResultsPopupProps} />);       
         expect(queryByText('Game results')).not.toBeInTheDocument();
        

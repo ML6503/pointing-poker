@@ -6,7 +6,7 @@
 import * as React from "react";
 export * from '@testing-library/react';
 import { fireEvent, cleanup, within, waitFor } from "@testing-library/react";
-import { render } from '../../test-utils';
+import { render } from '../../__mocks__/test-utils';
 import { InitPage } from '../../components/InitPage/initPage';
 
 afterEach(() => {
