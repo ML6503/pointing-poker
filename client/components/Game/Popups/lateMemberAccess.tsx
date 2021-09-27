@@ -14,8 +14,8 @@ import { ILatePlayer } from 'utils/interfaces';
 interface LateMemberAccessProps {
   requestToJoin: boolean;
   lateMember: ILatePlayer;
-  onAllow: () => void;
-  onRoomLeaveLateMember: () => void;
+  onAllow: (lateMember: ILatePlayer) => void;
+  onRoomLeaveLateMember: (lateMember: ILatePlayer) => void;
   classBtn: string;
 }
 
@@ -42,15 +42,13 @@ export const LateMemberAccess: FC<LateMemberAccessProps> = ({
     <DialogActions>
       <Grid container justifyContent='space-around'>
         <Box boxShadow={4} mb={1}>
-          <Button className={classBtn} onClick={onAllow}>
-            {' '}
-            YES{' '}
+          <Button className={classBtn} onClick={() => onAllow(lateMember)}>
+            YES
           </Button>
         </Box>
         <Box boxShadow={4} mb={1}>
-          <Button className={classBtn} onClick={onRoomLeaveLateMember}>
-            {' '}
-            NO{' '}
+          <Button className={classBtn} onClick={() => onRoomLeaveLateMember(lateMember)}>
+            NO
           </Button>
         </Box>
       </Grid>

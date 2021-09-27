@@ -34,10 +34,10 @@ interface MakeChoiceProps {
 export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
   const classes = useStyleHomePage();
   const router = useRouter();
-  const [ roomList, setRoomList ] = useState<Array<IRoomInfo>>(rooms);
-  const [ openCreate, setOpenCreate ] = useState(false);
-  const [ openConnect, setOpenConnect ] = useState(false);
-  const [ userData, setUserData ] = useState({
+  const [roomList, setRoomList] = useState<Array<IRoomInfo>>(rooms);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openConnect, setOpenConnect] = useState(false);
+  const [userData, setUserData] = useState({
     ...userInitData,
     username: {
       ...userInitData.username,
@@ -46,9 +46,9 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
       ...userInitData.userSurname,
     },
   });
-  const [ role, setRole ] = useState(roles.member);
-  const [ roomInfo, setRoomInfo ] = useState<IRoomCreateData>(roomInitData);
-  const [ loading, setLoading ] = useState(false);
+  const [role, setRole] = useState(roles.member);
+  const [roomInfo, setRoomInfo] = useState<IRoomCreateData>(roomInitData);
+  const [loading, setLoading] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
   const onRoomList = (rooms: Array<IRoomInfo>) => {
@@ -147,8 +147,8 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
     try {
       const res = await apiGetRooms();
       const data = await res.data;
-      if( res.status === 200) {
-        if(typeof data === 'string') {
+      if (res.status === 200) {
+        if (typeof data === 'string') {
           setRoomList([]);
         } else {
           setRoomList(data);
@@ -159,16 +159,13 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
     }
   };
 
-  useEffect(
-    () => {
-      if (role === roles.observer) {
-        dispatch(setUserRole(role));
-      } else {
-        dispatch(setUserRole(role));
-      }
-    },
-    [ role ],
-  );
+  useEffect(() => {
+    if (role === roles.observer) {
+      dispatch(setUserRole(role));
+    } else {
+      dispatch(setUserRole(role));
+    }
+  }, [role]);
 
   useEffect(() => {
     window.onbeforeunload = () => {
@@ -250,10 +247,10 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                 open={openCreate}
                 confirm={onCreateRoom}
                 onRoleChange={() =>
-                  setRole(
-                    (prev) =>
-                      prev === roles.observer ? roles.member : roles.observer,
-                  )}
+                  setRole((prev) =>
+                    prev === roles.observer ? roles.member : roles.observer,
+                  )
+                }
                 role={role}
                 loading={(status) => setLoading(status)}
                 changeUserData={changeUserData}
@@ -296,10 +293,10 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                 open={openConnect}
                 confirm={onEnterRoom}
                 onRoleChange={() =>
-                  setRole(
-                    (prev) =>
-                      prev === roles.observer ? roles.member : roles.observer,
-                  )}
+                  setRole((prev) =>
+                    prev === roles.observer ? roles.member : roles.observer,
+                  )
+                }
                 role={role}
                 loading={(status) => setLoading(status)}
                 changeUserData={changeUserData}

@@ -14,12 +14,15 @@ import roomContoller from '../roomServices/roomController';
 const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: process.env.SOCKET_URL_CONNECTION,
+      // origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
       allowedHeaders: ['my-custom-header'],
       credentials: true,
     },
   });
+  console.log('URL', process.env.SOCKET_URL_CONNECTION);
+  console.log('PORT', process.env.PORT);
 
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);
@@ -62,6 +65,8 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('leaveRoom', (message: socketRoomUserIdInward) => {
+      console.log('LEAVE ROOM');
+      
       const { roomId, userId } = message;
       const room = roomContoller.getRoomId(roomId);
       if (room) {
@@ -70,7 +75,10 @@ const socketServer = (httpServer) => {
         if (userDealer && userDealer.dealer) {
           roomContoller.gameOver(roomId);
           io.in(roomId).emit('gameOver', 'The end');
+          const rooms = roomContoller.getRoomsInfo();
+          socket.broadcast.emit('roomList', rooms);
         } else {
+          roomContoller.playerLeave(roomId, userId);
           roomContoller.leaveUserFromRoom(roomId, userId);
           users = roomContoller.getRoomUsers(roomId);
           socket.to(roomId).emit('userLeft', users);
@@ -80,7 +88,7 @@ const socketServer = (httpServer) => {
     });
 
     socket.on('startGame', (message: { roomId: string }) => {
-      socket.to(message.roomId).emit('gameStarted');
+      io.in(message.roomId).emit('gameStarted');
     });
 
     socket.on('gameCardChoice', (message: socketRoomPlayerChoiceInward) => {
@@ -134,6 +142,8 @@ const socketServer = (httpServer) => {
       const { roomId } = message;
       roomContoller.gameOver(roomId);
       io.in(roomId).emit('gameOver', 'The end');
+      const rooms = roomContoller.getRoomsInfo();
+      socket.broadcast.emit('roomList', rooms);
     });
 
     socket.on('gameOverFinish', (message: { roomId: string }) => {
@@ -172,11 +182,20 @@ const socketServer = (httpServer) => {
       const room = roomContoller.getRoom(roomId);
 
       if (gameStatus) {
-        if (gameStatus.isAutoJoin) {
+        if (gameStatus.isAutoJoin && !gameStatus.isVoting) {
           if (userRole === 'member') {
             roomContoller.addLatePlayer(roomId, userId);
           }
           socket.emit('allowToAutoJoin', { room, userId });
+        } else if (gameStatus.isAutoJoin && gameStatus.isVoting) {
+          socket.to(roomId).emit('allowToAutoJoinGame', {
+            room,
+            userId,
+            username,
+            userSurname,
+            userRole,
+          });
+          socket.emit('votingIsOn', userId);
         } else if (gameStatus.isStarted) {
           socket.to(roomId).emit('latePlayerAskToJoin', {
             room,
@@ -252,6 +271,12 @@ const socketServer = (httpServer) => {
       const { roomId, issues } = message;
       io.in(roomId).emit('issuesLobbyChanged', issues);
     });
+
+    socket.on('abandonedRoom', (roomId: string) => {
+      roomContoller.gameOver(roomId);
+      const rooms = roomContoller.getRoomsInfo();
+      socket.broadcast.emit('roomList', rooms);
+    })
   });
 };
 

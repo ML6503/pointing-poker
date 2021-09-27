@@ -54,7 +54,6 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const [chosenSeq, setChosenSeq] = useState<Array<number>>();
   const [cardPot, setCardPot] = useState('');
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
-  const [isCreatingIssue, setIsCreatingIssue] = useState(false);
 
   const onStartGameClick = async () => {
     if (
@@ -66,7 +65,6 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     const create = await apiCreateGame(lobby, gameSettings);
     setGameSettings(initGameSettings);
     state.socket.emit('startGame', { roomId: lobby });
-    router.push(`/${lobby}/game`);
   };
 
   const onIssueCreate = (issue: IssueData) => {

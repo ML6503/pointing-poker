@@ -3,13 +3,16 @@ import { createServer } from 'http';
 import cors from 'cors';
 import socketServer from './socket/socketController';
 import roomContoller from './roomServices/roomController';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
 app.use(cors());
 
 socketServer(httpServer);
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
@@ -17,11 +20,11 @@ app.get('/', (req, res) => {
   res.send(`<h1>Hello from server</h1>`);
 });
 
-app.post('/', (req, res) => {
-  const data = req.body.data;
+// app.post('/', (req, res) => {
+//   const data = req.body.data;
 
-  res.status(201).json(data);
-});
+//   res.status(201).json(data);
+// });
 
 app.get('/rooms', (req, res) => {
   const rooms = roomContoller.getRoomsInfo();
@@ -76,5 +79,5 @@ app.post('/gamestart/:room', (req, res) => {
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

@@ -1,17 +1,16 @@
 import axios from 'axios';
-import { BASE_URL } from 'utils/apiConfig';
 import {
-  IApiGetLobbyInfo,
-  IApiStartGame,
   IGameSettings,
   IRoomInfo,
 } from 'utils/interfaces';
+
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
 
 export const apiGetLobbyUsers = async (room: string | Array<string>) => {
   if (typeof room === 'string') {
     const users = await axios({
       method: 'GET',
-      url: `${BASE_URL}/users/${room}`,
+      url: `/users/${room}`,
     });
     return users;
   }
@@ -22,7 +21,7 @@ export const apiGetLobbyChats = async (room: string | Array<string>) => {
   if (typeof room === 'string') {
     const chat = await axios({
       method: 'GET',
-      url: `${BASE_URL}/chats/${room}`,
+      url: `/chats/${room}`,
     });
     return chat;
   }
@@ -32,7 +31,7 @@ export const apiGetLobbyChats = async (room: string | Array<string>) => {
 export const apiGetRooms = async () => {
   const rooms = await axios({
     method: 'GET',
-    url: `${BASE_URL}/rooms`,
+    url: `/rooms`,
   });
   return rooms;
 };
@@ -41,7 +40,7 @@ export const apiStartGame = async (room: string | Array<string>) => {
   if (typeof room === 'string') {
     const gameInitData = await axios({
       method: 'GET',
-      url: `${BASE_URL}/gamestart/${room}`,
+      url: `/gamestart/${room}`,
     });
     return gameInitData;
   }
@@ -55,7 +54,7 @@ export const apiCreateGame = async (
   if (typeof room === 'string') {
     const users = await axios({
       method: 'POST',
-      url: `${BASE_URL}/gamestart/${room}`,
+      url: `/gamestart/${room}`,
       data: data,
     });
   }
@@ -64,7 +63,7 @@ export const apiCreateGame = async (
 export const apiCreateRoom = async (config: {data: IRoomInfo}): Promise<string> => {
   const createRoom = await axios({
     method: 'POST',
-    url: `${BASE_URL}/rooms`,
+    url: `/rooms`,
     data: config,
   });
   return createRoom.data;

@@ -72,7 +72,7 @@ class Game {
       timer: { ...this.timer },
       card: { ...this.card },
       issues: this.issues,
-      isAutoJoin:  this.isAutoJoin,
+      isAutoJoin: this.isAutoJoin,
       isStarted: this.isStarted,
       isVoting: this.isVoting,
     };
@@ -80,13 +80,16 @@ class Game {
   };
 
   clearScoreAndChoices = (issue: IGameIssue): void => {
-    if(issue.totalScore) {
+    if (issue.totalScore) {
       issue.totalScore = 0;
       issue.amendedScore = 0;
       issue.score = [];
-      issue.players = issue.players.map(player => ({player: player.player, choice: 0}))
+      issue.players = issue.players.map((player) => ({
+        player: player.player,
+        choice: 0,
+      }));
     }
-  }
+  };
 
   setPlayerChoice = (playerChoice: IPlayerChoice): void => {
     const issueFound = this.issues.find(
@@ -124,7 +127,7 @@ class Game {
       }, []);
 
       const score = issueScore.map((item) => {
-        const ratio = (item.playerQuantity / item.totalPlayers * 100).toFixed(
+        const ratio = ((item.playerQuantity / item.totalPlayers) * 100).toFixed(
           2,
         );
         return {
@@ -158,8 +161,8 @@ class Game {
     if (gameIssue) {
       const gameTaskCopy = {
         ...gameIssue,
-        players: [ ...gameIssue.players ],
-        score: [ ...gameIssue.score ],
+        players: [...gameIssue.players],
+        score: [...gameIssue.score],
       };
       return gameTaskCopy;
     }
@@ -176,7 +179,7 @@ class Game {
 
   getIsVoting = (): boolean => {
     return this.isVoting;
-  }
+  };
 
   checkVoting = (issueName: string): Array<IGameIssue> | null => {
     const gameIssue = this.issues.find(
@@ -231,20 +234,33 @@ class Game {
   };
 
   addLatePlayer = (player: string): void => {
-    const newPlayer = {
-      player: player,
-      choice: 0,
-    };
-    this.issues.forEach(issue => issue.players.push(newPlayer));
-  }
+    const playerFound = this.issues.find((issue) =>
+      issue.players.find((issuePlayer) => issuePlayer.player === player),
+    );
+    if (!playerFound) {
+      const newPlayer = {
+        player: player,
+        choice: 0,
+      };
+      this.issues.forEach((issue) => issue.players.push(newPlayer));
+    }
+  };
 
   getGameStatus = (): IGameStatus => {
     return {
       isStarted: this.isStarted,
       isAutoJoin: this.isAutoJoin,
       isVoting: this.isVoting,
-    }
-  }
+    };
+  };
+
+  playerLeave = (player: string): void => {
+    this.issues.forEach((issue) => {
+      issue.players = issue.players.filter(
+        (issuePlayer) => issuePlayer.player !== player,
+      );
+    });
+  };
 }
 
 export default Game;

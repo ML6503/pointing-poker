@@ -59,9 +59,13 @@ export const GameDealer: FC<GameDealerProps> = ({
   const [title, setTitle] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
   const [requestToJoin, setRequestToJoin] = useState(false);
+  const [lateMembers, setLateMembers] = useState<Array<ILatePlayer>>([]);
   const [lateMember, setLateMember] = useState<ILatePlayer>(null);
   const [isScoreOpen, setIsScoreOpen] = useState(false);
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const [autoJoin, setAutoJoin] = useState(false);
+  const [joined, setJoined] = useState(true);
+
   const btnHidden = clsx(
     timer && timer.isTimer ? classes.btnHidden : classes.mBottom,
   );
@@ -105,15 +109,88 @@ export const GameDealer: FC<GameDealerProps> = ({
     onChangeCloseIssue();
   };
 
+  const handleCloseDialog = () => {
+    setRequestToJoin(false);
+    setLateMembers([]);
+    setLateMember(null);
+    setAutoJoin(false);
+    setJoined(true);
+  };
+
+  const onAllow = (user: ILatePlayer) => {
+    state.socket.emit('allowLatePlayerIntoGame', {
+      roomId: lobby,
+      user,
+    });
+  };
+
+  const onAllowConfirm = (user: ILatePlayer) => {
+    state.socket.emit('allowLatePlayerIntoGame', {
+      roomId: lobby,
+      user,
+    });
+    setJoined(true);
+    setLateMembers((prev) =>
+      prev.filter((member) => member.userId !== user.userId),
+    );
+  };
+
+  const onRoomLeaveLateMember = (user: ILatePlayer) => {
+    state.socket.emit('declineLateMember', {
+      roomId: lobby,
+      userId: user.userId,
+    });
+    setJoined(true);
+    setLateMembers((prev) =>
+      prev.filter((member) => member.userId !== user.userId),
+    );
+  };
+
+  const onLeaveRoomDealer = () => {
+    setIsLeaveOpen(true);
+  };
+
   const lateMemberToJoin = (data: ILatePlayerToJoin) => {
-    setLateMember({
-      userId: data.userId,
-      username: data.username,
-      userSurname: data.userSurname,
-      userRole: data.userRole,
+    setLateMembers((prev) => {
+      const newLatePlayer = {
+        userId: data.userId,
+        username: data.username,
+        userSurname: data.userSurname,
+        userRole: data.userRole,
+      };
+      return [...prev, newLatePlayer];
     });
     setRequestToJoin(true);
   };
+
+  const lateMemberAutoJoin = (data: ILatePlayerToJoin) => {
+    setLateMembers((prev) => {
+      const newLatePlayer = {
+        userId: data.userId,
+        username: data.username,
+        userSurname: data.userSurname,
+        userRole: data.userRole,
+      };
+      return [...prev, newLatePlayer];
+    });
+    setAutoJoin(true);
+  };
+
+  useEffect(() => {
+    if (!voting && lateMembers && lateMembers.length && autoJoin) {
+      lateMembers.forEach((member) => onAllow(member));
+      handleCloseDialog();
+    }
+  }, [lateMembers, autoJoin, voting]);
+
+  useEffect(() => {
+    if (!voting && requestToJoin) {
+      if (lateMembers.length && joined) {
+        setJoined(false);
+        setLateMember(lateMembers[lateMembers.length - 1]);
+      } else if (!lateMembers.length) handleCloseDialog();
+    }
+  }, [requestToJoin, voting, joined]);
 
   useEffect(() => {
     const newTitle = gameIssues.map((item) => item.issue.issueName).join(', ');
@@ -125,12 +202,12 @@ export const GameDealer: FC<GameDealerProps> = ({
       gameFinish(message);
     });
 
-    state.socket.on('lateMemberAskToJoin', (message) => {
-      setRequestToJoin(true);
-    });
-
     state.socket.on('latePlayerAskToJoin', (message) => {
       lateMemberToJoin(message);
+    });
+
+    state.socket.on('allowToAutoJoinGame', (message) => {
+      lateMemberAutoJoin(message);
     });
 
     return () => {
@@ -138,34 +215,15 @@ export const GameDealer: FC<GameDealerProps> = ({
         gameFinish(message);
       });
 
-      state.socket.off('lateMemberAskToJoin', (message) => {});
+      state.socket.off('latePlayerAskToJoin', (message) => {
+        lateMemberToJoin(message);
+      });
+
+      state.socket.off('allowToAutoJoinGame', (message) => {
+        lateMemberAutoJoin(message);
+      });
     };
   }, []);
-
-  const handleCloseDialog = () => {
-    setRequestToJoin(false);
-    setLateMember(null);
-  };
-
-  const onAllow = () => {
-    state.socket.emit('allowLatePlayerIntoGame', {
-      roomId: lobby,
-      user: lateMember,
-    });
-    handleCloseDialog();
-  };
-
-  const onRoomLeaveLateMember = () => {
-    state.socket.emit('declineLateMember', {
-      roomId: lobby,
-      userId: lateMember.userId,
-    });
-    handleCloseDialog();
-  };
-
-  const onLeaveRoomDealer = () => {
-    setIsLeaveOpen(true);
-  };
 
   return (
     <div>
@@ -273,7 +331,7 @@ export const GameDealer: FC<GameDealerProps> = ({
         <LateMemberAccess
           requestToJoin={requestToJoin}
           lateMember={lateMember}
-          onAllow={onAllow}
+          onAllow={onAllowConfirm}
           onRoomLeaveLateMember={onRoomLeaveLateMember}
           classBtn={classes.btn}
         />
