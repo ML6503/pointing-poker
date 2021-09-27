@@ -46,7 +46,6 @@ describe('game Player component', () => {
           // timer component by id
           expect(getByTestId('timer')).toBeInTheDocument();
           // 15 seconds passed by timer time
-          expect(getByText(/15/i)).toBeInTheDocument();
-   ;      
+          expect(getByText(/15/i)).toBeInTheDocument(); 
     });
 });

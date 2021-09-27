@@ -9,13 +9,8 @@ export * from '@testing-library/react';
 import { fireEvent, within, cleanup, waitForElementToBeRemoved } from "@testing-library/react";
 import { render, screen } from '../../test-utils';
 import IssueList  from '../../components/Lobby/issueList';
+import { mockIssuesProps } from "__mocks__/mockedData";
 
-// jest.mock('socket.io-client', () => {
-//     const mSocket = {
-//       emit: jest.fn(),
-//     };
-//     return jest.fn(() => mSocket);
-//   });
 
 afterAll(async () => {
     await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
@@ -23,23 +18,7 @@ afterAll(async () => {
 
 describe('IssueList element test', () => {
     // jest.setTimeout(30000);
-    const mockIssuesProps = {
-        onIssueCreate: jest.fn(),
-        onIssueDelete: jest.fn(),
-        onIssueEdit: jest.fn(),
-        issues: [
-            {
-                issueName: '12',
-                priority: 'low',
-                issueDescription: 'blah blah',
-              },
-              {
-                issueName: '20',
-                priority: 'High',
-                issueDescription: 'blah',
-              }
-        ],
-    };
+
 
     it("should render IssueList", () => {
         
@@ -89,7 +68,7 @@ describe('IssueList element test', () => {
 
       it("by selecting issue and clicking edit icon user can edit issue", async () => {
         
-        const { getByTestId, findByTestId, getByText, getByRole, findByText, queryByTestId } = render(<IssueList {  ...mockIssuesProps } />);
+        const { getByTestId, findByTestId, getByText, getByRole, findByText } = render(<IssueList {  ...mockIssuesProps } />);
 
         const selectIssueInput = getByTestId('select-issue-input');
         const selectInputBtn = within(selectIssueInput).getByRole('button');

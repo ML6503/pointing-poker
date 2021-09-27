@@ -16,7 +16,10 @@ import { appReducer } from 'store/reducer';
 import { io, Socket } from 'socket.io-client';
 import { BASE_URL } from 'utils/apiConfig';
 
-export const socketIo = io(BASE_URL, {
+
+
+
+const socketIo = io(BASE_URL, {
   withCredentials: true,
   auth: {
     userId: '',
@@ -27,7 +30,7 @@ export const socketIo = io(BASE_URL, {
 });
 
 socketIo.on('connect', () => {});
-// socketIo.disconnect().connect();
+socketIo.disconnect().connect(); 
 
 if (process.env.NODE_ENV === 'test') {
   socketIo.disconnect();
@@ -36,7 +39,26 @@ if (process.env.NODE_ENV === 'test') {
 
 }
 
-afterAll( () => socketIo.disconnect());
+setTimeout(() => socketIo.disconnect(), 30000);
+
+
+const initialValues = {
+  // socket: mockSocket,
+  socket: socketIo,
+  userId: 'jkfl_5HJ',
+  username: 'TestName',
+  userSurname: 'TestSurname',
+  avatar: '',
+  roomId: 'JolH-PxZl2-e9RLsuyc-9',
+  roomName: 'TestRoom',
+  userRole: 'member',
+  dealer: false,
+};
+
+afterAll( () => {
+  socketIo.disconnect();
+  socketIo.close();
+});
 
 // jest.mock('socket.io-client', () => {
 //   const mSocket = {
@@ -59,18 +81,6 @@ afterAll( () => socketIo.disconnect());
 //     mockSocket.on('connect', () => {});
 //     afterAll(() => mockSocket.close());
 
-const initialValues = {
-  // socket: mockSocket,
-  socket: socketIo,
-  userId: 'jkfl_5HJ',
-  username: 'TestName',
-  userSurname: 'TestSurname',
-  avatar: '',
-  roomId: 'JolH-PxZl2-e9RLsuyc-9',
-  roomName: 'TestRoom',
-  userRole: 'member',
-  dealer: false,
-};
 
 
 // Add in any providers here if necessary:
