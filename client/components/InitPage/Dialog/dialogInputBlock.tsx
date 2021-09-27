@@ -88,9 +88,11 @@ export const DialogInputBlock: FC<DialogInputBlockProps> = ({
       }
       changeRoomData(newRoomInfo);
     }
-    changeUserData(newUserInfo);    
+    changeUserData(newUserInfo);
+    
+    
   };
-  
+
   return (
     <>
       <DialogContent>
@@ -104,7 +106,6 @@ export const DialogInputBlock: FC<DialogInputBlockProps> = ({
           onChange={(e) => onChangeInput(e)}
           error={nameError}
           helperText={nameErrorInfo}
-          data-testid="name-create-input"
         />
         <TextField
           margin="dense"
@@ -115,7 +116,6 @@ export const DialogInputBlock: FC<DialogInputBlockProps> = ({
           onChange={(e) => onChangeInput(e)}
           error={surnameError}
           helperText={surnameErrorInfo}
-          data-testid="surname-create-input"
         />
         {newGame && (
           <TextField
@@ -127,7 +127,6 @@ export const DialogInputBlock: FC<DialogInputBlockProps> = ({
           onChange={(e) => onChangeInput(e)}
           error={roomNameError}
           helperText={roomNameErrorInfo}
-          data-testid="room-create-input"
         />
         )}
       </DialogContent>

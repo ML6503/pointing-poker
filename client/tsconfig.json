@@ -10,7 +10,6 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    // "types": ["@types/jest"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -19,11 +18,9 @@
     "paths": { //alias pathing for absolute paths
       "@src/*": ["src/*"],
       "@pages/*": ["pages/*"],
-      "@styles/*": ["styles/*"],
-      "@/components/*": ["components/*"],     
+      "@styles/*": ["styles/*"]
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.js"],
-  // "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.js", "setupTests.js"], */
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

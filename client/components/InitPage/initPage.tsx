@@ -13,7 +13,7 @@ import {
   setUsername,
   setUserRole,
   setUserSurname,
-} from '../../store/actionCreators';
+} from 'store/actionCreators';
 import AppContext from 'store/store';
 import { roles, roomInitData, userInitData } from 'utils/configs';
 import {
@@ -207,7 +207,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
           className={classes.titleWrapper}
         >
           <Grid item>
-            <Image src={pokerImage} data-testid="poker-image"/>
+            <Image src={pokerImage} />
           </Grid>
           <Grid item>
             <Typography variant='h3' align='center'>
@@ -238,7 +238,6 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                   dispatch(setDealer(true));
                 }}
                 className={classes.btn}
-                data-testid="start-new-game-btn"
               >
                 Start New game
               </Button>
@@ -258,7 +257,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                 addAvatar={addAvatar}
                 userInfo={userData}
                 roomInfo={roomInfo}
-                newGame={true}                
+                newGame={true}
               />
             </Grid>
           </Grid>
@@ -284,7 +283,6 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                   setOpenConnect(true);
                 }}
                 className={classes.btn}
-                data-testid="room-connect-btn"
               >
                 Connect to Room
               </Button>

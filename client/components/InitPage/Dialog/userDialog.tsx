@@ -57,8 +57,8 @@ export const UserDialog: FC<UserDialogProps> = ({
   const classes = useStyleDialog();
 
   return (
-    <div >
-      <MyDialog open={open} onClose={onDialogClose} data-testid="user-dialog">
+    <div>
+      <MyDialog open={open} onClose={onDialogClose}>
         <Grid container className={classes.root} wrap="nowrap">
           <Grid item xl={9}>
             <DialogTitle>Connect to lobby</DialogTitle>
@@ -93,7 +93,7 @@ export const UserDialog: FC<UserDialogProps> = ({
           <Button onClick={onDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={confirm} color="primary" data-testid="confirm-new-room-create-btn">
+          <Button onClick={confirm} color="primary">
             Confirm
           </Button>
         </DialogActions>

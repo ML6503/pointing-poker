@@ -78,7 +78,7 @@ const CreateIssuePopup: FC<CreateIssuePopupProps> = ({ onIssueCreate, issues }) 
   );
 
   return (
-    <div data-testid="create-issue-popup">
+    <div>
       <AddIcon color="primary" onClick={handleClickOpen} className={classes.btn}>
         Create new Issue
       </AddIcon>

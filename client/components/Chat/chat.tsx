@@ -35,7 +35,6 @@ export const Chat: FC<ChatProps> = ({ chatMessages }) => {
         message,
       });
       setMessage('');
-      console.log('MSG sent', message);
     }
   };
 
@@ -71,7 +70,6 @@ export const Chat: FC<ChatProps> = ({ chatMessages }) => {
         direction="column"
         wrap="nowrap"
         className={classes.chatMessages}
-        data-testid="message-section"
       >
         {messages && <ChatMessages messages={messages} />}
       </Grid>
