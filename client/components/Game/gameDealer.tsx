@@ -228,7 +228,7 @@ export const GameDealer: FC<GameDealerProps> = ({
   return (
     <div>
       <Typography variant='h6' align='center' gutterBottom>
-        Spring: {sprintTitle} planning (issues: {title})
+        Sprint: {sprintTitle} planning (issues: {title})
       </Typography>
 
       <Typography variant='subtitle2'>Dealer:</Typography>
