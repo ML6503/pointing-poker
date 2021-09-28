@@ -96,7 +96,7 @@ const ChangeIssuePopup: FC<ChangeIssueProps> = ({
             >
               <option value="low">Low</option>
               <option value="middle">Middle</option>
-              <option value="high">High</option>
+              <option value="hight">Hight</option>
             </NativeSelect>
             <FormHelperText>choose the priority of issue</FormHelperText>
           </FormControl>
