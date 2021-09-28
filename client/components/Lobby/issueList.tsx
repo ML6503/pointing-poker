@@ -70,6 +70,7 @@ const IssueList: FC<IssueListProps> = ({
                 )
               }
               onChange={onIssueSelect}
+              data-testid="select-issue-input"
             >
               <MenuItem value="">
                 <em>None</em>
@@ -91,7 +92,7 @@ const IssueList: FC<IssueListProps> = ({
           alignContent="center"
           xs={6}
         >
-          <Grid item>
+          <Grid item data-testid="create-issue-icon">
             <CreateIssuePopup onIssueCreate={onIssueCreate} issues={issues} />
           </Grid>
           <Grid item>
@@ -99,6 +100,7 @@ const IssueList: FC<IssueListProps> = ({
               color="error"
               onClick={onIssueDeleteClick}
               className={classes.deleteButton}
+              data-testid="delete-issue-icon"
             />
           </Grid>
           <Grid item>

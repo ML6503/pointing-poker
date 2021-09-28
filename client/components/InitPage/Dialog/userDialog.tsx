@@ -58,7 +58,7 @@ export const UserDialog: FC<UserDialogProps> = ({
 
   return (
     <div>
-      <MyDialog open={open} onClose={onDialogClose}>
+      <MyDialog open={open} onClose={onDialogClose} data-testid="user-dialog">
         <Grid container className={classes.root} wrap="nowrap">
           <Grid item xl={9}>
             <DialogTitle>Connect to lobby</DialogTitle>

@@ -207,7 +207,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
           className={classes.titleWrapper}
         >
           <Grid item>
-            <Image src={pokerImage} />
+            <Image src={pokerImage} data-testid="poker-image" />
           </Grid>
           <Grid item>
             <Typography variant='h3' align='center'>
@@ -238,6 +238,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                   dispatch(setDealer(true));
                 }}
                 className={classes.btn}
+                data-testid="start-new-game-btn"
               >
                 Start New game
               </Button>
@@ -283,6 +284,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
                   setOpenConnect(true);
                 }}
                 className={classes.btn}
+                data-testid="room-connect-btn"
               >
                 Connect to Room
               </Button>

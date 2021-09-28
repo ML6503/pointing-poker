@@ -56,7 +56,7 @@ export const Timer: FC<TimerProps> = ({ timer, timeStarted, onTimerStop }) => {
   );
 
   return (
-    <div className={classes.timerContainer}>
+    <div className={classes.timerContainer} data-testid='timer'>
       <Box boxShadow={4} className={classes.timerBox}>
         <Typography align="center" className={classes.timerText}>
           {' '}

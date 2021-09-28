@@ -13,13 +13,13 @@ export const ChatMessages: FC<ChatMessagesProps> = ({ messages }) => {
   const classes = useStylesChat();
 
   return (
-    <>
+    <div data-testid="message-section">
       {messages &&
         messages.map((message) => (
           <Grid item key={nanoid()}>
             <ChatMessage message={message} />
           </Grid>
         ))}
-    </>
+    </div>
   );
 };

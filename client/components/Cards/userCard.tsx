@@ -23,7 +23,7 @@ export const UserCard: FC<UserCardProps> = ({
   const dealerName = clsx((state.userId === user.id) && classes.dealerName);
 
   return (
-    <div className={dealerRole}>
+    <div className={dealerRole} data-testid="user-card">
       <div className={observerRole}>
         {user.avatar && (
           <div
