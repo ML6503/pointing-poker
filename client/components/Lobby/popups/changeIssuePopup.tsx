@@ -62,6 +62,7 @@ const ChangeIssuePopup: FC<ChangeIssueProps> = ({
         color="primary"
         className={classes.btn}
         onClick={onOpenPopup}
+        data-testid="edit-issue-icon"
       />
       <Dialog
         open={open}
@@ -80,6 +81,7 @@ const ChangeIssuePopup: FC<ChangeIssueProps> = ({
             fullWidth
             value={issue?.issueName}
             onChange={onChangeIssueName}
+            inputProps={{ "data-testid": "change-issue-name-input" }}
           />
           <FormControl className={classes.select}>
             <InputLabel htmlFor="issue">Priority:</InputLabel>
@@ -90,6 +92,7 @@ const ChangeIssuePopup: FC<ChangeIssueProps> = ({
               inputProps={{
                 name: 'issue',
               }}
+              data-testid="select-issue-priority-input"
             >
               <option value="low">Low</option>
               <option value="middle">Middle</option>
@@ -104,6 +107,7 @@ const ChangeIssuePopup: FC<ChangeIssueProps> = ({
             fullWidth
             value={issue?.issueDescription}
             onChange={onChangeIssueDescription}
+            inputProps={{ "data-testid": "change-issue-description-input" }}
           />
         </DialogContent>
         <DialogActions>
