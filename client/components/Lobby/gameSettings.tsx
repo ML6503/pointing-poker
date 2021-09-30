@@ -1,9 +1,10 @@
 import { Typography, Grid, TextField, Switch } from '@material-ui/core';
 import { useStylesSettingsGame } from '@styles/settings.style';
-import React, { FC, useEffect, useState } from 'react';
-import { cardDecks, gameSelectOptions, sequences, timerValid } from 'utils/configs';
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { cardDecks, gameSelectOptions, sequences, timerValid, custom_Seq } from 'utils/configs';
 import { IGameTimer } from 'utils/interfaces';
 import { GameSelect } from './gameSelect';
+import CreateSequencePopup from './popups/createSequencePopup';
 
 interface GameSettingsProps {
   onTimerChange: (timer: boolean) => void;
@@ -13,7 +14,10 @@ interface GameSettingsProps {
   onCardTurn: (cardChange: boolean) => void;
   isCardChange: boolean;
   onAutoJoinChange: (isAutoJoin: boolean) => void;
-  isAutoJoin: boolean; 
+  isAutoJoin: boolean;
+  // onSequenceCreate: (sequence: (number| string)[]) => void;
+  sequence: number[];
+  setSequence: Dispatch<SetStateAction<number[]>>;
 }
 
 const GameSettings: FC<GameSettingsProps> = ({
@@ -25,10 +29,14 @@ const GameSettings: FC<GameSettingsProps> = ({
   isCardChange,
   onAutoJoinChange,
   isAutoJoin,
+  sequence,
+  setSequence, 
+  // onSequenceCreate,
 }) => {
   const classes = useStylesSettingsGame();
   const [ optionsArr, setOptionsArr ] = useState<Array<string>>();
   const [ cardDeckArr, setCardDeckArr ] = useState<Array<string>>();
+  const [openSequenceCreate, setOpenSequenceCreate] = useState<boolean>(false); 
 
   const onTimerClick = (timerSwitch: string) => {
     onTimerChange(timerSwitch ? true : false);
@@ -42,6 +50,7 @@ const GameSettings: FC<GameSettingsProps> = ({
     onCardTurn(cardChangeSwitch ? true : false);
   };
 
+  
   useEffect(() => {
     const optArr = sequences.map((seq) => seq.name);
     setOptionsArr(optArr);
@@ -49,6 +58,8 @@ const GameSettings: FC<GameSettingsProps> = ({
     setCardDeckArr(deckArr);
 
   }, []);
+
+
 
   return (
     <div style={{ width: '100%' }}>
@@ -132,10 +143,20 @@ const GameSettings: FC<GameSettingsProps> = ({
                 selectName={gameSelectOptions.sequence}
                 options={optionsArr}
                 onSelectClick={onSelectClick}
+                setOpenSequenceCreate={setOpenSequenceCreate}                
               />
             )}
           </Grid>
         </Grid>
+        { openSequenceCreate &&
+        <CreateSequencePopup 
+          // onSequenceCreate={onSequenceCreate}
+          openSequenceCreate={openSequenceCreate}
+          setOpenSequenceCreate={setOpenSequenceCreate}
+          sequence={sequence}
+          setSequence={setSequence}
+          />
+        }
         <Grid item container spacing={2}>
           <Grid item xl={6} xs={6}>
             <Typography

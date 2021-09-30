@@ -9,6 +9,7 @@ interface CardListProps {
   onAddCard: () => void;
   cardPot: string;
   onRemoveCard: () => void;
+  customSequence: Array<number>;
 }
 
 export const CardList: FC<CardListProps> = ({
@@ -17,7 +18,9 @@ export const CardList: FC<CardListProps> = ({
   onAddCard,
   cardPot,
   onRemoveCard,
+  customSequence,
 }) => {
+
   return (
     <>
       <Typography variant="subtitle1">Add card</Typography>
@@ -26,7 +29,7 @@ export const CardList: FC<CardListProps> = ({
         {cardDeck &&
           sequence &&
           cardDeck.map((deck, i) => (
-            <GameCard cardImg={deck} cardNumber={sequence[i]} key={deck} />
+            <GameCard cardImg={deck} cardNumber={!customSequence.includes(999) ? customSequence[i] : sequence[i]} key={deck} />
           ))}
         <GameCard
           cardImg={''}

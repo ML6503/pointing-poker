@@ -31,6 +31,12 @@ export const issueErrorConfig = {
   existIssue: 'this issue name alreasy exists',
 };
 
+export const sequenceErrorConfig = {
+  ok: 'correct',
+  noEntry: 'must be digits from 1 to 500 each',
+  noEntryValidator: 1, 
+};
+
 export const userInitData = {
   username: {
     nameData: '',
@@ -74,6 +80,7 @@ export const cardDecks = [
 
 export const fibonacci_Seq = [ 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ];
 export const doubleNum_Seq = [ 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 ];
+export const custom_Seq = [ 999, 999, 999, 999, 999, 999, 999, 999, 999, 999 ];
 
 export const maxCardNumber = 9;
 export const minCardNumber = 3;
@@ -88,6 +95,10 @@ export const sequences = [
     name: 'Double numbers',
     sequence: doubleNum_Seq,
   },
+  {
+    name: 'Custom sequence',
+    sequence: custom_Seq,
+  }
 ];
 
 export const gameSelectOptions = {

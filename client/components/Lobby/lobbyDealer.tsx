@@ -13,6 +13,7 @@ import { IGameIssue, IGameSettings, IssueData, IUser } from 'utils/interfaces';
 import { ObserverList } from './observerList';
 import {
   cardDecks,
+  custom_Seq,
   initGameSettings,
   maxCardNumber,
   minCardNumber,
@@ -54,6 +55,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const [chosenSeq, setChosenSeq] = useState<Array<number>>();
   const [cardPot, setCardPot] = useState('');
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const [sequence, setSequence] = useState<number[]>(custom_Seq); 
 
   const onStartGameClick = async () => {
     if (
@@ -136,6 +138,8 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     });
   };
 
+  console.log('GAME SETTngs Lobby', gameSettings);
+  
   const onAddCard = () => {
     setGameSettings((prev) => {
       const card = { ...prev.card };
@@ -144,6 +148,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       }
 
       const cardSequence = selectCardSequence(card.cardNumber, card.sequence);
+      console.log('CardSeq ', card.sequence);    
       if (cardSequence && cardSequence.length) {
         setChosenSeq(cardSequence);
       }
@@ -214,6 +219,10 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       roomId: lobby,
       sprintName,
     });
+  };
+
+  const onSequenceCreate = (sequence: number[]) => {
+    console.log('Lobby Dealer custom sequence', sequence);
   };
 
   useEffect(() => {
@@ -334,6 +343,9 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
           isCardChange={gameSettings.card.cardTurn}
           onAutoJoinChange={onAutoJoinChange}
           isAutoJoin={gameSettings.isAutoJoin}
+          sequence={sequence}
+          setSequence={setSequence}
+          // onSequenceCreate={onSequenceCreate}
         />
       </Grid>
       <Grid item container>
@@ -343,6 +355,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
           onAddCard={onAddCard}
           onRemoveCard={onRemoveCard}
           cardPot={cardPot}
+          customSequence={sequence}
         />
       </Grid>
       <KickPlayerPopup
