@@ -37,14 +37,17 @@ export const GameSelect: FC<GameSelectProps> = ({
   const [ option, setOptions ] = useState<string | number>(options[0]);
   const [ open, setOpen ] = useState(false);
 
-  const handleChange = (e) => {
-    const sequence = e.target.value;
-    setOptions(sequence);
-    console.log('seq', sequence);
-    onSelectClick(sequence, e.target.name); 
+  const handleCustomSequencePopup = (sequence: string) => {
     if (sequence === CUSTOM_SEQUENCE) {
       setOpenSequenceCreate(true);
     }
+  };
+
+  const handleChange = (e) => {
+    const sequence = e.target.value;
+    setOptions(sequence);    
+    onSelectClick(sequence, e.target.name); 
+    handleCustomSequencePopup(sequence);
   };
 
   const handleClose = () => {
@@ -53,6 +56,10 @@ export const GameSelect: FC<GameSelectProps> = ({
 
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const handleItemClick = (sequence: string) => {
+    handleCustomSequencePopup(sequence);
   };
 
   return (
@@ -75,7 +82,7 @@ export const GameSelect: FC<GameSelectProps> = ({
         {options &&
           options.map((item) => {
             return (
-              <MenuItem value={item} key={item}>
+              <MenuItem value={item} key={item} onClick={() => handleItemClick(item)}>
                 {item}
               </MenuItem>
             );

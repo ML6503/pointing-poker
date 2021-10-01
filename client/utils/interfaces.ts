@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface IUser {
   username: string;
   userSurname: string;
@@ -86,6 +88,7 @@ export interface IGameSettings {
   card: IGameCard;
   isAutoJoin: boolean;
   isStarted: boolean;
+  customSequence?: Array<number| string>;
 }
 
 export interface IGameCardOption {
@@ -202,4 +205,11 @@ export interface ILatePlayer {
 
 export interface ILatePlayerToJoin extends ILatePlayer {
   roomId: string;
+}
+
+export interface CreateSequencePopupProps {
+  openSequenceCreate: boolean;
+  setOpenSequenceCreate: Dispatch<SetStateAction<boolean>>;
+  sequence: Array<number | string>;
+  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
 }

@@ -1,7 +1,7 @@
 import { Typography, Grid, TextField, Switch } from '@material-ui/core';
 import { useStylesSettingsGame } from '@styles/settings.style';
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
-import { cardDecks, gameSelectOptions, sequences, timerValid, custom_Seq } from 'utils/configs';
+import { cardDecks, gameSelectOptions, sequences, timerValid } from 'utils/configs';
 import { IGameTimer } from 'utils/interfaces';
 import { GameSelect } from './gameSelect';
 import CreateSequencePopup from './popups/createSequencePopup';
@@ -14,10 +14,9 @@ interface GameSettingsProps {
   onCardTurn: (cardChange: boolean) => void;
   isCardChange: boolean;
   onAutoJoinChange: (isAutoJoin: boolean) => void;
-  isAutoJoin: boolean;
-  // onSequenceCreate: (sequence: (number| string)[]) => void;
-  sequence: number[];
-  setSequence: Dispatch<SetStateAction<number[]>>;
+  isAutoJoin: boolean;  
+  sequence: Array<number | string>;
+  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
 }
 
 const GameSettings: FC<GameSettingsProps> = ({
@@ -30,8 +29,7 @@ const GameSettings: FC<GameSettingsProps> = ({
   onAutoJoinChange,
   isAutoJoin,
   sequence,
-  setSequence, 
-  // onSequenceCreate,
+  setSequence,  
 }) => {
   const classes = useStylesSettingsGame();
   const [ optionsArr, setOptionsArr ] = useState<Array<string>>();
@@ -44,12 +42,11 @@ const GameSettings: FC<GameSettingsProps> = ({
 
   const onAutoJoinClick = (isAutoJoin: string) => {
     onAutoJoinChange(isAutoJoin ? true : false);
-  }
+  };
 
   const onChangingCardClick = (cardChangeSwitch: string): void => {
     onCardTurn(cardChangeSwitch ? true : false);
   };
-
   
   useEffect(() => {
     const optArr = sequences.map((seq) => seq.name);
@@ -58,8 +55,6 @@ const GameSettings: FC<GameSettingsProps> = ({
     setCardDeckArr(deckArr);
 
   }, []);
-
-
 
   return (
     <div style={{ width: '100%' }}>
@@ -149,8 +144,7 @@ const GameSettings: FC<GameSettingsProps> = ({
           </Grid>
         </Grid>
         { openSequenceCreate &&
-        <CreateSequencePopup 
-          // onSequenceCreate={onSequenceCreate}
+        <CreateSequencePopup          
           openSequenceCreate={openSequenceCreate}
           setOpenSequenceCreate={setOpenSequenceCreate}
           sequence={sequence}

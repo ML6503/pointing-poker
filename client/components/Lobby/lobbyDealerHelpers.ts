@@ -22,6 +22,19 @@ export const issueCreate = (
   };
 };
 
+export const sequenceCreate = (
+  state: IGameSettings,
+  sequence: Array<number | string>,
+): IGameSettings => {
+  // const defaultSeq = [...state.customSequence];
+  // const newSequence = defaultSeq.splice(0, defaultSeq.length, ...sequence);
+  return {
+    ...state,
+    // customSequence: newSequence,
+    customSequence: sequence,
+  };
+};
+
 export const issueChanged = (
   state: IGameSettings,
   newIssues: Array<IGameIssue>,
@@ -82,9 +95,6 @@ export const timeChange = (
   }
 
   if (dimension === 'seconds') {
-    console.log(timeToMinutes(timer.time).toString());
-    console.log(secondsToTime(timerData));
-
     newTime =
       minutesToTime(timeToMinutes(timer.time).toString()) +
       secondsToTime(timerData);
@@ -123,15 +133,25 @@ export const selectCard = (
 export const selectCardSequence = (
   cardNumber: number,
   choice: string,
-): Array<number> => {
-  let chosenSeq = [] as Array<number>;
+  customSequence: Array<number | string>
+): Array<number | string> => {
+  let chosenSeq = [] as Array<number | string>;
 
   const seq = sequences.filter((item) => item.name === choice);
   if (seq.length) {
-    chosenSeq = Array.from(
-      { length: cardNumber },
-      (_, i) => seq[0].sequence[i],
-    );
+    if(choice === 'Custom sequence') {
+      chosenSeq = Array.from(
+        { length: cardNumber },
+        (_, i) => customSequence[i],
+      );
+    } else {
+      chosenSeq = Array.from(
+        { length: cardNumber },
+        (_, i) => seq[0].sequence[i],
+      );
+    }
+
+    
   }
   return chosenSeq;
 };
