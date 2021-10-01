@@ -23,7 +23,7 @@ const CreateIssuePopup: FC<CreateIssuePopupProps> = ({ onIssueCreate, issues }) 
   const [priority, setPriority] = useState('low');
   const [issueName, setIssueName] = useState('');
   const [issueDescription, setIssueDescription] = useState('');
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [ issueError, setIssueError ] = useState<string>('');
   const [ disabled, setDisabled ] = useState(true);
 

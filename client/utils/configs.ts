@@ -27,8 +27,16 @@ export const errorInfo = {
 export const issueErrorConfig = {
   ok: 'Correct',
   noEntry: 'issue name must be at least 1 character',
-  noEntryValidator: 1,
+  noEntryValidator: 1,  
   existIssue: 'this issue name alreasy exists',
+};
+
+export const sequenceErrorConfig = {
+  ok: 'correct',
+  noEntry: 'enter from 1 to 3 any non-whitespace characters each, except 999',
+  noEntryValidator: 1,
+  validator: 3,
+  notAllEntryValidator: 'all 10 sequence options must be filled - 999 is not allowed for voting'
 };
 
 export const userInitData = {
@@ -72,8 +80,12 @@ export const cardDecks = [
   },
 ];
 
+export const seqLength = 10;
+
 export const fibonacci_Seq = [ 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ];
 export const doubleNum_Seq = [ 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 ];
+export const custom_Seq = Array(seqLength).fill("");
+// export const custom_Seq = [];
 
 export const maxCardNumber = 9;
 export const minCardNumber = 3;
@@ -88,6 +100,10 @@ export const sequences = [
     name: 'Double numbers',
     sequence: doubleNum_Seq,
   },
+  {
+    name: 'Custom sequence',
+    sequence: custom_Seq,
+  }
 ];
 
 export const gameSelectOptions = {
@@ -112,9 +128,19 @@ export const initGameSettings = {
   isAutoJoin: false,
   isStarted: true,
   isVoting: false,
+  // customSequence: custom_Seq,
+  customSequence: [],
 };
 
 export const timerValid = {
   minutesMax: 3 * 60 * 1000,
   secondsMin: 10 * 1000,
 };
+
+//1st opt
+//  /^\w(?!999$)\S{0,2}$ /g
+//2nd opt
+// /^(?!999$)\w\S{0,2}$/g
+// corr below
+// /(?!999$)^[^\s]{1,3}$/g
+export const customSeqElRegex = /(?!999$)^[^\s]{1,3}$/g;

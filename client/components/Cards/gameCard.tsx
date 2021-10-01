@@ -18,7 +18,7 @@ const cardSize = {
 
 interface GameCardProps {
   cardImg: string;
-  cardNumber: number;
+  cardNumber: number | string;
   game?: boolean;
   empty?: boolean;
   onAddCard?: () => void;

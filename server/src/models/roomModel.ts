@@ -164,6 +164,14 @@ class Room {
     this.game.addNewIssue(issue, playerIds);
   };
 
+  createCustomSequence = (customSequence: Array<number | string>): void => {
+    this.game.createCustomSequence(customSequence);
+  };
+
+  getCustomSequence = (): Array<number | string> => {    
+      return this.game.getCustomSequence();    
+  };
+
   getTimer = (): IGameTimer => {
     const timer = this.game.getTimer();
     if (timer) return timer;

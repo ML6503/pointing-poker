@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -22,20 +22,32 @@ interface GameSelectProps {
   selectName: string;
   options: Array<string>;
   onSelectClick: (option: string, selectName: string) => void;
+  setOpenSequenceCreate?: Dispatch<SetStateAction<boolean>>;
 }
+
+const CUSTOM_SEQUENCE = 'Custom sequence';
 
 export const GameSelect: FC<GameSelectProps> = ({
   selectName,
   options,
   onSelectClick,
+  setOpenSequenceCreate,
 }) => {
   const classes = useStyles();
   const [ option, setOptions ] = useState<string | number>(options[0]);
   const [ open, setOpen ] = useState(false);
 
+  const handleCustomSequencePopup = (sequence: string) => {
+    if (sequence === CUSTOM_SEQUENCE) {
+      setOpenSequenceCreate(true);
+    }
+  };
+
   const handleChange = (e) => {
-    setOptions(e.target.value);
-    onSelectClick(e.target.value, e.target.name);
+    const sequence = e.target.value;
+    setOptions(sequence);    
+    onSelectClick(sequence, e.target.name); 
+    handleCustomSequencePopup(sequence);
   };
 
   const handleClose = () => {
@@ -44,6 +56,10 @@ export const GameSelect: FC<GameSelectProps> = ({
 
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const handleItemClick = (sequence: string) => {
+    handleCustomSequencePopup(sequence);
   };
 
   return (
@@ -66,7 +82,7 @@ export const GameSelect: FC<GameSelectProps> = ({
         {options &&
           options.map((item) => {
             return (
-              <MenuItem value={item} key={item}>
+              <MenuItem value={item} key={item} onClick={() => handleItemClick(item)}>
                 {item}
               </MenuItem>
             );

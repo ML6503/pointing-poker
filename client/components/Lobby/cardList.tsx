@@ -5,10 +5,11 @@ import { nonVoted } from 'utils/configs';
 
 interface CardListProps {
   cardDeck: Array<string>;
-  sequence: Array<number>;
+  sequence: Array<number | string>;
   onAddCard: () => void;
   cardPot: string;
   onRemoveCard: () => void;
+  customSequence: Array<number | string>;
 }
 
 export const CardList: FC<CardListProps> = ({
@@ -17,7 +18,9 @@ export const CardList: FC<CardListProps> = ({
   onAddCard,
   cardPot,
   onRemoveCard,
+  customSequence,
 }) => {
+
   return (
     <>
       <Typography variant="subtitle1">Add card</Typography>
@@ -26,6 +29,7 @@ export const CardList: FC<CardListProps> = ({
         {cardDeck &&
           sequence &&
           cardDeck.map((deck, i) => (
+            // <GameCard cardImg={deck} cardNumber={customSequence.indexOf('') === -1 ? Number(customSequence[i]) : sequence[i]} key={deck} />
             <GameCard cardImg={deck} cardNumber={sequence[i]} key={deck} />
           ))}
         <GameCard

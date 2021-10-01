@@ -1,9 +1,10 @@
 import { Typography, Grid, TextField, Switch } from '@material-ui/core';
 import { useStylesSettingsGame } from '@styles/settings.style';
-import React, { FC, useEffect, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { cardDecks, gameSelectOptions, sequences, timerValid } from 'utils/configs';
 import { IGameTimer } from 'utils/interfaces';
 import { GameSelect } from './gameSelect';
+import CreateSequencePopup from './popups/createSequencePopup';
 
 interface GameSettingsProps {
   onTimerChange: (timer: boolean) => void;
@@ -13,7 +14,9 @@ interface GameSettingsProps {
   onCardTurn: (cardChange: boolean) => void;
   isCardChange: boolean;
   onAutoJoinChange: (isAutoJoin: boolean) => void;
-  isAutoJoin: boolean; 
+  isAutoJoin: boolean;  
+  sequence: Array<number | string>;
+  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
 }
 
 const GameSettings: FC<GameSettingsProps> = ({
@@ -25,10 +28,13 @@ const GameSettings: FC<GameSettingsProps> = ({
   isCardChange,
   onAutoJoinChange,
   isAutoJoin,
+  sequence,
+  setSequence,  
 }) => {
   const classes = useStylesSettingsGame();
   const [ optionsArr, setOptionsArr ] = useState<Array<string>>();
   const [ cardDeckArr, setCardDeckArr ] = useState<Array<string>>();
+  const [openSequenceCreate, setOpenSequenceCreate] = useState<boolean>(false); 
 
   const onTimerClick = (timerSwitch: string) => {
     onTimerChange(timerSwitch ? true : false);
@@ -36,12 +42,12 @@ const GameSettings: FC<GameSettingsProps> = ({
 
   const onAutoJoinClick = (isAutoJoin: string) => {
     onAutoJoinChange(isAutoJoin ? true : false);
-  }
+  };
 
   const onChangingCardClick = (cardChangeSwitch: string): void => {
     onCardTurn(cardChangeSwitch ? true : false);
   };
-
+  
   useEffect(() => {
     const optArr = sequences.map((seq) => seq.name);
     setOptionsArr(optArr);
@@ -132,10 +138,19 @@ const GameSettings: FC<GameSettingsProps> = ({
                 selectName={gameSelectOptions.sequence}
                 options={optionsArr}
                 onSelectClick={onSelectClick}
+                setOpenSequenceCreate={setOpenSequenceCreate}                
               />
             )}
           </Grid>
         </Grid>
+        { openSequenceCreate &&
+        <CreateSequencePopup          
+          openSequenceCreate={openSequenceCreate}
+          setOpenSequenceCreate={setOpenSequenceCreate}
+          sequence={sequence}
+          setSequence={setSequence}
+          />
+        }
         <Grid item container spacing={2}>
           <Grid item xl={6} xs={6}>
             <Typography

@@ -183,6 +183,20 @@ class Rooms {
     }
   };
 
+  createCustomSequence = (roomId: string, customSequence:  Array<number | string>): void => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      return room.createCustomSequence(customSequence);
+    }
+  };
+
+  getCustomSequence = (roomId: string):  Array<number | string> => {
+    const room = this.rooms.find((room) => room.getRoomId() === roomId);
+    if (room) {
+      return room.getCustomSequence();
+    }
+  };
+
   setVoting = (roomId: string, voting: boolean): void => {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
     if (room) {

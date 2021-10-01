@@ -13,10 +13,11 @@ import { IGameIssue, IGameSettings, IssueData, IUser } from 'utils/interfaces';
 import { ObserverList } from './observerList';
 import {
   cardDecks,
+  custom_Seq,
   initGameSettings,
   maxCardNumber,
   minCardNumber,
-  roles,
+  roles,  
   sequences,
 } from 'utils/configs';
 import { CardList } from './cardList';
@@ -32,6 +33,7 @@ import {
   timerChange,
   autoJoinChange,
   sprintNameChange,
+  sequenceCreate,
 } from './lobbyDealerHelpers';
 import { DealerLeavePage } from 'components/Game/Popups/dealerLeavePage';
 
@@ -51,9 +53,25 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const [gameSettings, setGameSettings] =
     useState<IGameSettings>(initGameSettings);
   const [chosenDeck, setChosenDeck] = useState<Array<string>>();
-  const [chosenSeq, setChosenSeq] = useState<Array<number>>();
+  const [chosenSeq, setChosenSeq] = useState<Array<number | string>>();
   const [cardPot, setCardPot] = useState('');
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
+  const [customSequence, setCustomSequence] = useState<Array<number | string>>(custom_Seq); 
+  
+
+  useEffect(() => {
+    
+    if(gameSettings.card.sequence === 'Custom sequence') {
+      
+      setChosenSeq(
+        Array.from(
+          { length: gameSettings.card.cardNumber },
+          (_, i) => customSequence[i],
+        ),
+      );
+    }
+
+  }, [customSequence]);
 
   const onStartGameClick = async () => {
     if (
@@ -64,7 +82,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       return null;
     const create = await apiCreateGame(lobby, gameSettings);
     setGameSettings(initGameSettings);
-    state.socket.emit('startGame', { roomId: lobby });
+    state.socket.emit('startGame', { roomId: lobby });    
   };
 
   const onIssueCreate = (issue: IssueData) => {
@@ -77,6 +95,20 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       return newState;
     });
   };
+    
+  useEffect(() => {
+    if(customSequence.indexOf('') === -1) {
+     
+      setGameSettings((prev) => {
+        const newState = sequenceCreate(prev, customSequence);   
+        return newState;
+      });
+      
+    }
+
+    }, [customSequence, chosenSeq]);
+
+    
 
   const onIssueDelete = (newIssues: Array<IGameIssue>) => {
     setGameSettings((prev) => {
@@ -110,6 +142,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     const cardSequence = selectCardSequence(
       gameSettings.card.cardNumber,
       choice,
+      gameSettings.customSequence
     );
     if (cardSequence && cardSequence.length) {
       setChosenSeq(cardSequence);
@@ -136,6 +169,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     });
   };
 
+  
   const onAddCard = () => {
     setGameSettings((prev) => {
       const card = { ...prev.card };
@@ -143,7 +177,8 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
         card.cardNumber++;
       }
 
-      const cardSequence = selectCardSequence(card.cardNumber, card.sequence);
+      const cardSequence = selectCardSequence(card.cardNumber, card.sequence, gameSettings.customSequence);
+     
       if (cardSequence && cardSequence.length) {
         setChosenSeq(cardSequence);
       }
@@ -164,7 +199,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
         card.cardNumber--;
       }
 
-      const cardSequence = selectCardSequence(card.cardNumber, card.sequence);
+      const cardSequence = selectCardSequence(card.cardNumber, card.sequence, gameSettings.customSequence);
       if (cardSequence && cardSequence.length) {
         setChosenSeq(cardSequence);
       }
@@ -216,18 +251,30 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     });
   };
 
+
+
   useEffect(() => {
     const dealer = users?.find((user) => user.dealer);
     setDealer(dealer);
   }, [users]);
-  useEffect(() => {
-    setChosenSeq(
-      Array.from(
-        { length: gameSettings.card.cardNumber },
-        (_, i) => sequences[0].sequence[i],
-      ),
-    );
 
+  useEffect(() => {
+    if(gameSettings.card.sequence === 'Custom sequence') {
+      setChosenSeq(
+        Array.from(
+          { length: gameSettings.card.cardNumber },
+          (_, i) => customSequence[i],
+        ),
+      );
+    } else {
+      setChosenSeq(
+        Array.from(
+          { length: gameSettings.card.cardNumber },
+          (_, i) => sequences[0].sequence[i],
+        ),
+      );
+    }
+    
     setChosenDeck(
       Array.from(
         { length: gameSettings.card.cardNumber },
@@ -252,7 +299,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       setCardPot(deck[deck.length - 1]);
     }
   }, [chosenDeck]);
-
+  
   return (
     <Grid
       container
@@ -334,6 +381,8 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
           isCardChange={gameSettings.card.cardTurn}
           onAutoJoinChange={onAutoJoinChange}
           isAutoJoin={gameSettings.isAutoJoin}
+          sequence={customSequence}
+          setSequence={setCustomSequence}          
         />
       </Grid>
       <Grid item container>
@@ -343,6 +392,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
           onAddCard={onAddCard}
           onRemoveCard={onRemoveCard}
           cardPot={cardPot}
+          customSequence={customSequence}
         />
       </Grid>
       <KickPlayerPopup
