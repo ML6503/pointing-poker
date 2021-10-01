@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IGamePageIssue } from 'utils/interfaces';
 import { nanoid } from 'nanoid';
+import Typography from '@mui/material/Typography';
 
 interface IGameResultsTableProps {
   issues: IGamePageIssue[];
@@ -37,9 +38,12 @@ const GameResultTable: FC<IGameResultsTableProps> = ({ issues }) => {
               <TableCell align="center">{item.issue.priority}</TableCell>
               <TableCell align="center">{item.issue.issueDescription}</TableCell>
               <TableCell align="center">{item.totalScore}</TableCell>
-              {item.score.map((score) => {
-                return <TableRow key={nanoid()}>{`Choice ${score.choice} - Ratio ${score.ratio}`}</TableRow>
-              })}
+              <TableCell align="center">
+              {item.score.map((score) => (
+                <Typography sx={{ p: 1 }} key={nanoid()}>{`Choice ${score.choice} - Ratio ${score.ratio}`}</Typography>
+                )
+              )}         
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
