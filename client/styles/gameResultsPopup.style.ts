@@ -12,5 +12,5 @@ export const useStylesGameResultsPopup = makeStyles((theme) => ({
   },
   btnsContainer: {
     marginTop: '20px'
-  }
+  },
 }));
