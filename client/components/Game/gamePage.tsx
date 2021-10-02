@@ -48,8 +48,7 @@ export const GamePage: FC<GamePageProps> = ({
   const [result, setResult] = useState(false);
   const [timeStarted, setTimeStarted] = useState<number>();
   const [errorPage, setErrorPage] = useState(false);
-  // const [customSeq, setCustomSeq] = useState<Array<number>>();
-
+  
   const onUserJoinLeave = (users: Array<IUser>) => {
     setUsers(users);
   };
@@ -133,8 +132,7 @@ export const GamePage: FC<GamePageProps> = ({
     setVoting(message.voting)
   };
 
-  console.log('gameData', gameData);
-
+  
   const gameInit = (gameData: IApiStartGame) => {
     if (gameData && typeof gameData !== 'string') {
       setGameIssues(gameData.issues);
@@ -282,11 +280,6 @@ export const GamePage: FC<GamePageProps> = ({
  
     };
   }, []);
-
-  // useEffect(() => {   
-  //   gameInit(gameData);
-
-  // }, [customSeq]);
 
   return (
     <Grid container className={classes.container}>
