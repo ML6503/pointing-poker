@@ -20,7 +20,6 @@ class Rooms {
   createRoom = (roomId: IRoomInfo): void => {
     const room = new Room(roomId);
     this.rooms.push(room);
-    console.log('new room in rooms, length: ', this.rooms.length);
   };
 
   getRooms = (): Array<Room> => {
@@ -36,13 +35,11 @@ class Rooms {
 
   getRoomIds = (): Array<string> => {
     const roomIds = this.rooms.map((room) => room.getRoomId());
-    console.log('get rooms Ids', roomIds);
     return roomIds;
   };
 
   getRoomId = (roomId: string): string | null => {
     const room = this.rooms.find((room) => room.getRoomId() === roomId);
-    console.log('get room by Id');
     if (room) return roomId;
     return null;
   };

@@ -63,7 +63,11 @@ createStyles({
     justifyContent: 'flex-start',
   },
   dealerName: {
-    width: '100%',
+    width: '75%',
+    textAlign: 'left'
+  },
+  userName: {
+    width: '55%',
     textAlign: 'left'
   }
 }));

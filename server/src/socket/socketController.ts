@@ -21,8 +21,6 @@ const socketServer = (httpServer) => {
       credentials: true,
     },
   });
-  console.log('URL', process.env.SOCKET_URL_CONNECTION);
-  console.log('PORT', process.env.PORT);
 
   io.on('connection', (socket) => {
     console.log(`Connected to socket: ${socket.id}`);

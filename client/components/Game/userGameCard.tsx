@@ -31,7 +31,8 @@ export const UserGameCard: FC<UserGameCardProps> = ({ user, observer, score }) =
         )}
       </div>
       <div className={classes.dealerName}>
-      <Typography variant="body1">{user.username}{' '}{user.userSurname}</Typography>
+      <Typography variant="body1" noWrap>{user.username}</Typography>
+      <Typography variant="body1" noWrap>{user.userSurname}</Typography>
       </div>
     </div>
   );

@@ -297,7 +297,6 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     }
   }, [chosenDeck]);
   
-  console.log('GameSettings', gameSettings );
   return (
     <Grid
       container

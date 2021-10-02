@@ -20,7 +20,7 @@ export const UserCard: FC<UserCardProps> = ({
     user.dealer && classes.containerDealer,
   );
 
-  const dealerName = clsx((state.userId === user.id) && classes.dealerName);
+  const userName = clsx((state.userId === user.id) && classes.dealerName || classes.userName);
 
   return (
     <div className={dealerRole} data-testid="user-card">
@@ -38,9 +38,12 @@ export const UserCard: FC<UserCardProps> = ({
           </>
         )}
       </div>
-      <div className={dealerName}>
-        <Typography variant="h5" className="">
-          {user.username}{' '}{user.userSurname}
+      <div className={userName}>
+        <Typography variant="h5" noWrap>
+          {user.username}
+        </Typography>
+        <Typography variant="h5" noWrap>
+          {user.userSurname}
         </Typography>
       </div>
       {(!user.dealer || (!user.dealer && state.userId !== user.id)) ? 
