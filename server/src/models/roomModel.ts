@@ -30,7 +30,6 @@ class Room {
     this.roomId = room.roomId;
     this.roomName = room.roomName;
     this.game = new Game(this.roomId);
-    console.log('new room created');
   }
 
   getRoomId = (): string | null => {
@@ -82,7 +81,6 @@ class Room {
     }
   };
   getChatMessages = (): Array<IChatMessage> => {
-    console.log('request for CHAT');
     return this.chatMessages;
   };
 
@@ -164,7 +162,7 @@ class Room {
     this.game.addNewIssue(issue, playerIds);
   };
 
-  createCustomSequence = (customSequence: Array<number | string>): void => {
+  createCustomSequence = (customSequence: Array<string>): void => {
     this.game.createCustomSequence(customSequence);
   };
 
