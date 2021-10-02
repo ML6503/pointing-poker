@@ -210,6 +210,6 @@ export interface ILatePlayerToJoin extends ILatePlayer {
 export interface CreateSequencePopupProps {
   openSequenceCreate: boolean;
   setOpenSequenceCreate: Dispatch<SetStateAction<boolean>>;
-  sequence: Array<number | string>;
-  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
+  sequence: Array<string>;
+  setSequence: Dispatch<SetStateAction<Array<string>>>;
 }

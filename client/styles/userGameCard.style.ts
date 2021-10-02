@@ -52,7 +52,7 @@ createStyles({
     fontSize: '15px'
   },
   dealerName: {
-    width: '100%',
+    width: '75%',
     textAlign: 'left'
   },
   containerDealer: {

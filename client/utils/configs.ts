@@ -82,8 +82,8 @@ export const cardDecks = [
 
 export const seqLength = 10;
 
-export const fibonacci_Seq = [ 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ];
-export const doubleNum_Seq = [ 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 ];
+export const fibonacci_Seq = [ '1', '2', '3', '5', '8', '13', '21', '34', '55', '89' ];
+export const doubleNum_Seq = [ '1', '2', '4', '8', '16', '32', '64', '128', '256', '512' ];
 export const custom_Seq = Array(seqLength).fill("");
 // export const custom_Seq = [];
 

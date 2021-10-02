@@ -69,7 +69,7 @@ export interface IGameSettingsFromClient {
   isAutoJoin: boolean;
   isStarted: boolean;
   isVoting: boolean;
-  customSequence?:  Array<number | string>;
+  customSequence?:  Array<string>;
 }
 
 export interface IGameSettings {
@@ -79,7 +79,7 @@ export interface IGameSettings {
   card: IGameCard;
   isAutoJoin: boolean;
   isStarted: boolean;
-  customSequence?: Array<number | string>;
+  customSequence?: Array<string>;
 }
 
 export interface socketRoomUserIdInward {
