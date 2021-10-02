@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,31 +10,22 @@ import {  FormHelperText } from "@material-ui/core";
 import { useStylesSequenceIssuePopup } from "@styles/createSequencePopup.style";
 import { CreateSequencePopupProps } from "utils/interfaces";
 import { seqLength, sequenceErrorConfig } from "utils/configs";
-import AppContext from "store/store";
 import { OneSequenceInput } from "./oneSequenceInput";
 
 
 const CreateSequencePopup: FC<CreateSequencePopupProps> = ({ sequence, setSequence, openSequenceCreate, setOpenSequenceCreate }) => {
-  const classes = useStylesSequenceIssuePopup();
-  const router = useRouter();
-  const { lobby } = router.query;
-  const { state } = useContext(AppContext);
+  const classes = useStylesSequenceIssuePopup();  
   const [ sequenceError, setSequenceError ] = useState<string>('');
   const [ disabled, setDisabled ] = useState(true);
 
   const correctCustomSequence = sequence.every(val => /(?!999$)^[^\s]{1,3}$/g.test(val.toString()));
   
-
   const createHandleClose = () => {    
     if(!correctCustomSequence){
       setSequenceError(sequenceErrorConfig.notAllEntryValidator);
       setDisabled(true);
  
-    } else {
-        state.socket.emit('createCustomSequence', {
-        roomId: lobby,
-        customSequence: sequence,
-      });
+    } else {  
       setOpenSequenceCreate(false);  
     }
   };
@@ -42,7 +33,6 @@ const CreateSequencePopup: FC<CreateSequencePopupProps> = ({ sequence, setSequen
   const handleClose = () => {
     setOpenSequenceCreate(false);
   }
-
 
   useEffect(() => {
           

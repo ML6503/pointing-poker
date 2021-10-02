@@ -53,25 +53,11 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
   const [gameSettings, setGameSettings] =
     useState<IGameSettings>(initGameSettings);
   const [chosenDeck, setChosenDeck] = useState<Array<string>>();
-  const [chosenSeq, setChosenSeq] = useState<Array<number | string>>();
+  const [chosenSeq, setChosenSeq] = useState<Array<string>>();
   const [cardPot, setCardPot] = useState('');
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
-  const [customSequence, setCustomSequence] = useState<Array<number | string>>(custom_Seq); 
+  const [customSequence, setCustomSequence] = useState<Array< string>>(custom_Seq); 
   
-
-  useEffect(() => {
-    
-    if(gameSettings.card.sequence === 'Custom sequence') {
-      
-      setChosenSeq(
-        Array.from(
-          { length: gameSettings.card.cardNumber },
-          (_, i) => customSequence[i],
-        ),
-      );
-    }
-
-  }, [customSequence]);
 
   const onStartGameClick = async () => {
     if (
@@ -95,19 +81,6 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
       return newState;
     });
   };
-    
-  useEffect(() => {
-    if(customSequence.indexOf('') === -1) {
-     
-      setGameSettings((prev) => {
-        const newState = sequenceCreate(prev, customSequence);   
-        return newState;
-      });
-      
-    }
-
-    }, [customSequence, chosenSeq]);
-
     
 
   const onIssueDelete = (newIssues: Array<IGameIssue>) => {
@@ -251,7 +224,31 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     });
   };
 
+  useEffect(() => {
+    if(customSequence.indexOf('') === -1) {
+     
+      setGameSettings((prev) => {
+        const newState = sequenceCreate(prev, customSequence);   
+        return newState;
+      });
+      
+    }
 
+  }, [customSequence, chosenSeq]);
+
+  useEffect(() => {
+    
+    if(gameSettings.card.sequence === 'Custom sequence') {
+      
+      setChosenSeq(
+        Array.from(
+          { length: gameSettings.card.cardNumber },
+          (_, i) => customSequence[i],
+        ),
+      );
+    }
+
+  }, [customSequence]);
 
   useEffect(() => {
     const dealer = users?.find((user) => user.dealer);
@@ -300,6 +297,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
     }
   }, [chosenDeck]);
   
+  console.log('GameSettings', gameSettings );
   return (
     <Grid
       container

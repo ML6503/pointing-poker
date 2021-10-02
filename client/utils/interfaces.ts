@@ -88,12 +88,12 @@ export interface IGameSettings {
   card: IGameCard;
   isAutoJoin: boolean;
   isStarted: boolean;
-  customSequence?: Array<number| string>;
+  customSequence?: Array<string>;
 }
 
 export interface IGameCardOption {
   name: string;
-  sequence: Array<number>;
+  sequence: Array<string>;
 }
 
 export interface IGamePagePlayer {
@@ -120,6 +120,7 @@ export interface IApiStartGame {
   issues: Array<IGamePageIssue>;
   players: IGamePagePlayer;
   timer: IGameTimer;
+  customSequence?: Array<string>;
 }
 
 export interface CreateIssuePopupProps {
@@ -210,6 +211,6 @@ export interface ILatePlayerToJoin extends ILatePlayer {
 export interface CreateSequencePopupProps {
   openSequenceCreate: boolean;
   setOpenSequenceCreate: Dispatch<SetStateAction<boolean>>;
-  sequence: Array<number | string>;
-  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
+  sequence: Array<string>;
+  setSequence: Dispatch<SetStateAction<Array<string>>>;
 }

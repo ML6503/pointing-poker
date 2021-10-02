@@ -133,6 +133,7 @@ export const GamePage: FC<GamePageProps> = ({
     setVoting(message.voting)
   };
 
+  console.log('gameData', gameData);
 
   const gameInit = (gameData: IApiStartGame) => {
     if (gameData && typeof gameData !== 'string') {
@@ -145,8 +146,11 @@ export const GamePage: FC<GamePageProps> = ({
 
       const seq = gameData.card.sequence;
       const currentSeq = sequences.find((item) => item.name === seq);
-      if (customSeq && currentSeq.name === 'Custom sequence') {
-        currentSeq.sequence = customSeq;
+      // if (customSeq && currentSeq.name === 'Custom sequence') {
+      //   currentSeq.sequence = customSeq;
+      // }
+      if (gameData.customSequence.length !== 0 && currentSeq.name === 'Custom sequence') {
+        currentSeq.sequence = gameData.customSequence;
       }
       if (currentSeq) {
         setChosenSeq(
@@ -220,10 +224,10 @@ export const GamePage: FC<GamePageProps> = ({
       setDealer(dealer);
     }
 
-    state.socket.emit('requestForCustomSequence', { roomId: lobby });
-    state.socket.on('newCustomSequence', (message) => {      
-    setCustomSeq(message);
-    });
+    // state.socket.emit('requestForCustomSequence', { roomId: lobby });
+    // state.socket.on('newCustomSequence', (message) => {      
+    // setCustomSeq(message);
+    // });
    
     gameInit(gameData);
 
@@ -253,9 +257,9 @@ export const GamePage: FC<GamePageProps> = ({
   
     return () => {
 
-      state.socket.off('newCustomSequence', (message) => {
-        setCustomSeq(message);
-      });
+      // state.socket.off('newCustomSequence', (message) => {
+      //   setCustomSeq(message);
+      // });
 
       state.socket.off('userJoined', (message) => {
         onUserJoinLeave(message);

@@ -176,18 +176,6 @@ const socketServer = (httpServer) => {
       io.in(roomId).emit('newGameIssue', issues);
     });
 
-    socket.on('createCustomSequence', (message) => {
-      const { roomId, customSequence } = message;
-      roomContoller.createCustomSequence(roomId, customSequence);
-      const newCustomSequence = roomContoller.getCustomSequence(roomId);      
-      io.in(roomId).emit('newCustomSequence', newCustomSequence);
-    });
-
-    socket.on('requestForCustomSequence', (message) => {
-      const { roomId } = message;     
-      const newCustomSequence = roomContoller.getCustomSequence(roomId);      
-      io.in(roomId).emit('newCustomSequence', newCustomSequence);
-    });
 
     socket.on('getGameData', (message: socketRoomUserDataInward) => {
       const { roomId, userId, username, userSurname, userRole } = message;

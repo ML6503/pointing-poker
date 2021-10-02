@@ -24,13 +24,11 @@ export const issueCreate = (
 
 export const sequenceCreate = (
   state: IGameSettings,
-  sequence: Array<number | string>,
+  sequence: Array<string>,
 ): IGameSettings => {
-  // const defaultSeq = [...state.customSequence];
-  // const newSequence = defaultSeq.splice(0, defaultSeq.length, ...sequence);
+
   return {
-    ...state,
-    // customSequence: newSequence,
+    ...state,   
     customSequence: sequence,
   };
 };
@@ -133,9 +131,9 @@ export const selectCard = (
 export const selectCardSequence = (
   cardNumber: number,
   choice: string,
-  customSequence: Array<number | string>
-): Array<number | string> => {
-  let chosenSeq = [] as Array<number | string>;
+  customSequence: Array<string>
+): Array<string> => {
+  let chosenSeq = [] as Array<string>;
 
   const seq = sequences.filter((item) => item.name === choice);
   if (seq.length) {
