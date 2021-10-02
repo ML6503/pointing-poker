@@ -26,7 +26,7 @@ class Game {
   private isAutoJoin: boolean;
   private isStarted: boolean;
   private isVoting: boolean;
-  private customSequence: Array<string> = [];
+  private customSequence?: Array<string> = [];
 
   constructor(roomId: string) {
     this.id = roomId;
@@ -198,14 +198,6 @@ class Game {
 
   getCardTurnStatus = (): boolean => {
     return this.card.cardTurn;
-  };
-
-  createCustomSequence = (customSequence: Array<string>): void => {
-    this.customSequence = customSequence;
-  };
-
-  getCustomSequence = (): Array<number | string> => {
-    return this.customSequence;
   };
 
   addNewIssue = (issue: IIssue, playerIds: Array<string>): void => {

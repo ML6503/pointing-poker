@@ -15,8 +15,8 @@ interface GameSettingsProps {
   isCardChange: boolean;
   onAutoJoinChange: (isAutoJoin: boolean) => void;
   isAutoJoin: boolean;  
-  sequence: Array<number | string>;
-  setSequence: Dispatch<SetStateAction<Array<number | string>>>;
+  sequence: Array<string>;
+  setSequence: Dispatch<SetStateAction<Array<string>>>;
 }
 
 const GameSettings: FC<GameSettingsProps> = ({

@@ -17,7 +17,7 @@ import { ObserverList } from './observerList';
 import { GameCard } from 'components/Cards/gameCard';
 import { apiGetLobbyUsers, apiStartGame } from 'services/apiServices';
 import { ErrorPopup } from 'components/Error/errorPopup';
-import { ContactsOutlined } from '@material-ui/icons';
+
 
 interface GamePageProps {
   gameData: IApiStartGame;
@@ -48,8 +48,7 @@ export const GamePage: FC<GamePageProps> = ({
   const [result, setResult] = useState(false);
   const [timeStarted, setTimeStarted] = useState<number>();
   const [errorPage, setErrorPage] = useState(false);
-  const [customSeq, setCustomSeq] = useState<Array<number>>();
-
+  
   const onUserJoinLeave = (users: Array<IUser>) => {
     setUsers(users);
   };
@@ -133,7 +132,7 @@ export const GamePage: FC<GamePageProps> = ({
     setVoting(message.voting)
   };
 
-
+  
   const gameInit = (gameData: IApiStartGame) => {
     if (gameData && typeof gameData !== 'string') {
       setGameIssues(gameData.issues);
@@ -145,8 +144,9 @@ export const GamePage: FC<GamePageProps> = ({
 
       const seq = gameData.card.sequence;
       const currentSeq = sequences.find((item) => item.name === seq);
-      if (customSeq && currentSeq.name === 'Custom sequence') {
-        currentSeq.sequence = customSeq;
+  
+      if (gameData.customSequence.length !== 0 && currentSeq.name === 'Custom sequence') {
+        currentSeq.sequence = gameData.customSequence;
       }
       if (currentSeq) {
         setChosenSeq(
@@ -220,11 +220,7 @@ export const GamePage: FC<GamePageProps> = ({
       setDealer(dealer);
     }
 
-    state.socket.emit('requestForCustomSequence', { roomId: lobby });
-    state.socket.on('newCustomSequence', (message) => {      
-    setCustomSeq(message);
-    });
-   
+     
     gameInit(gameData);
 
     onGameInfoRequest();
@@ -252,10 +248,6 @@ export const GamePage: FC<GamePageProps> = ({
  
   
     return () => {
-
-      state.socket.off('newCustomSequence', (message) => {
-        setCustomSeq(message);
-      });
 
       state.socket.off('userJoined', (message) => {
         onUserJoinLeave(message);
@@ -285,14 +277,9 @@ export const GamePage: FC<GamePageProps> = ({
       setResult(false);
       setActiveIssueName('');
       setActiveCard('');
-      setCustomSeq([]);   
+ 
     };
   }, []);
-
-  useEffect(() => {   
-    gameInit(gameData);
-
-  }, [customSeq]);
 
   return (
     <Grid container className={classes.container}>
