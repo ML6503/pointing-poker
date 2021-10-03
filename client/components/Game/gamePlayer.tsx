@@ -8,7 +8,7 @@ import { roles } from 'utils/configs';
 import useStylesGamePart from '@styles/gamePart.style';
 import { IssuesBlock } from './issuesBlock';
 import { Timer } from './Timer/timer';
-
+import Pulse from './VotingAnimation/pulse';
 interface GameDealerProps {
   dealer: IUser;
   gameIssues: Array<IGamePageIssue>;
@@ -17,6 +17,7 @@ interface GameDealerProps {
   timeStarted: number;
   onTimerStop: () => void;
   sprintTitle: string;
+  voting: boolean;     
 }
 
 export const GamePlayer: FC<GameDealerProps> = ({
@@ -26,7 +27,8 @@ export const GamePlayer: FC<GameDealerProps> = ({
   timer,
   timeStarted,
   onTimerStop,
-  sprintTitle
+  sprintTitle,
+  voting 
 }) => {
   const classes = useStylesGamePart();
   const router = useRouter();
@@ -79,8 +81,8 @@ export const GamePlayer: FC<GameDealerProps> = ({
 
       <Typography variant="subtitle2">Dealer:</Typography>
       <Grid container direction="column">
-        <Grid container justifyContent="space-between" alignItems="flex-end">
-          <Grid item className={classes.mBottom}>
+        <Grid container justifyContent="space-between" alignItems="flex-end" className={classes.mBottom}>        
+          <Grid item >
             {dealer && (
               <UserCard
                 user={dealer}
@@ -89,7 +91,8 @@ export const GamePlayer: FC<GameDealerProps> = ({
               />
             )}
           </Grid>
-          <Grid item className={classes.mBottom}>
+          {!timer.isTimer && !state.dealer && voting && <Pulse /> }
+          <Grid item >
             <Box boxShadow={2} mr={10}>
               <Button
                 variant="outlined"
@@ -100,7 +103,7 @@ export const GamePlayer: FC<GameDealerProps> = ({
               </Button>
             </Box>
           </Grid>
-        </Grid>
+        </Grid>        
         {timer && timer.isTimer && (
           <Timer
             timer={timer}
