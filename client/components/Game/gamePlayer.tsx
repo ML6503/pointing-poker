@@ -91,7 +91,7 @@ export const GamePlayer: FC<GameDealerProps> = ({
               />
             )}
           </Grid>
-          {!timer.isTimer && !state.dealer && voting && <Pulse /> }
+          {(timer && !timer.isTimer) && !state.dealer && voting && <Pulse /> }
           <Grid item >
             <Box boxShadow={2} mr={10}>
               <Button

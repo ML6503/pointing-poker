@@ -194,7 +194,7 @@ export interface IIssueResultConverted {
   Priority: string;
   Description: string;
   Score: number;
-  Ratio: number;
+  Voted: string;
 }
 
 export interface ILatePlayer {

@@ -15,7 +15,7 @@ const ExportCSV: FC<IExportCSV> = ({ issues }) => {
     Priority: item.issue.priority,
     Description: item.issue.issueDescription,
     Score: item.totalScore,
-    Ratio: item.score[0] ? item.score[0].ratio : 0,
+    Voted: item.score[0] ? `Choice ${item.score[0].choice} - Ratio ${item.score[0].ratio}` : '',
 }));
 
   const exportToCSV = (issuesData: IIssueResultConverted[], nameFile: string): void => {
