@@ -18,7 +18,6 @@ import { GameCard } from 'components/Cards/gameCard';
 import { apiGetLobbyUsers, apiStartGame } from 'services/apiServices';
 import { ErrorPopup } from 'components/Error/errorPopup';
 
-
 interface GamePageProps {
   gameData: IApiStartGame;
   userData: Array<IUser>;
@@ -320,8 +319,9 @@ export const GamePage: FC<GamePageProps> = ({
               timer={timer}
               timeStarted={timeStarted}
               onTimerStop={() => { }}
+              voting={voting}   
             />
-          )}
+          )}            
         <Grid container item>
           {state.userRole === roles.member &&
             chosenDeck &&
