@@ -91,8 +91,8 @@ export const GamePlayer: FC<GameDealerProps> = ({
               />
             )}
           </Grid>
-          {!timer && !state.dealer && voting && <Pulse /> }
-          <Grid item className={classes.mBottom}>
+          {!timer.isTimer && !state.dealer && voting && <Pulse /> }
+          <Grid item >
             <Box boxShadow={2} mr={10}>
               <Button
                 variant="outlined"
