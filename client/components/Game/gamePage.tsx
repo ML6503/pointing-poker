@@ -37,7 +37,7 @@ export const GamePage: FC<GamePageProps> = ({
   const [gameIssues, setGameIssues] = useState<Array<IGamePageIssue>>();
   const [activeIssueName, setActiveIssueName] = useState<string>();
   const [chosenDeck, setChosenDeck] = useState<Array<string>>();
-  const [chosenSeq, setChosenSeq] = useState<Array<number>>();
+  const [chosenSeq, setChosenSeq] = useState<Array<string>>();
   const [cardPot, setCardPot] = useState('');
   const [activeCard, setActiveCard] = useState<string>('');
   const [dealer, setDealer] = useState<IUser>();
@@ -87,7 +87,7 @@ export const GamePage: FC<GamePageProps> = ({
     setResult(true);
   }
 
-  const onGameCardClick = (cardName: string, cardNumber: number) => {
+  const onGameCardClick = (cardName: string, cardNumber: string) => {
     if (voting) {
       setActiveCard(cardName);
       state.socket.emit('gameCardChoice', {
@@ -201,7 +201,7 @@ export const GamePage: FC<GamePageProps> = ({
 
   useEffect(() => {
     router.beforePopState(({ url, as }) => {
-      console.log('beforePopState');
+      
       state.socket.emit('leaveRoom', {
         roomId: lobby,
         userId: state.userId,

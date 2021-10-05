@@ -23,11 +23,10 @@ export const StaticticsCard: FC<StatisticsCardProps> = ({ stat }) => {
   return (
     <Button
       variant="outlined"
-      className={classes.container}
-      onClick={() => console.log(stat.choice)}
+      className={classes.container}      
     >
       <div>
-        <Typography variant="h3" gutterBottom>{stat.choice === nonVoted ? '?' : `${stat.choice}`}</Typography>
+        <Typography variant="h3" gutterBottom>{stat.choice === +nonVoted ? '?' : `${stat.choice}`}</Typography>
         <Typography variant="h5">{`${stat.ratio}%`}</Typography>
       </div>
     </Button>

@@ -56,6 +56,10 @@ const useStylesGamePart = makeStyles((theme: Theme) => ({
   },
   btnHidden: {
     display: 'none',
+  },
+  voting: {
+    flexGrow: 4,
+    minWidth: '100px',
   }
 }));
 

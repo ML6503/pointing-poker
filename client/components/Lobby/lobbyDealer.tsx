@@ -388,8 +388,7 @@ export const LobbyDealer: FC<LobbyDealerProps> = ({ users, issues }) => {
           sequence={chosenSeq}
           onAddCard={onAddCard}
           onRemoveCard={onRemoveCard}
-          cardPot={cardPot}
-          customSequence={customSequence}
+          cardPot={cardPot}        
         />
       </Grid>
       <KickPlayerPopup
