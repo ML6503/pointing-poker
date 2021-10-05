@@ -20,12 +20,12 @@ const GameResultPopup: FC<IGameResultPopupProps> = ({
 
   const handleClickOpen = async () => {
     setOpen(true);
-    console.log(gameIssues)
+    
   };
 
   const exportFile = () => {
     setOpen(false);
-    console.log("export");
+    
   };
 
   const handleClose = () => {

@@ -90,7 +90,7 @@ export const custom_Seq = Array(seqLength).fill("");
 
 export const maxCardNumber = 9;
 export const minCardNumber = 3;
-export const nonVoted = 999; //if pot used or player do not want / cannot vote at all
+export const nonVoted = '999'; //if pot used or player do not want / cannot vote at all
 
 export const sequences = [
   {

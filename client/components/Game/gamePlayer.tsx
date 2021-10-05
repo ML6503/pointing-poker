@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState, useContext } from 'react';
 import { Typography, Grid, Box, Button } from '@material-ui/core';
+import clsx from 'clsx';
 import { IGamePageIssue, IGameTimer, IUser } from 'utils/interfaces';
 import AppContext from 'store/store';
 import { UserCard } from 'components/Cards/userCard';
@@ -47,7 +48,6 @@ export const GamePlayer: FC<GameDealerProps> = ({
   };
 
   const gameFinish = (message: string) => {
-    console.log('gameOver', message);
     state.socket.emit('gameOverFinish', { roomId: lobby });
     router.push('/');
   };
@@ -81,18 +81,20 @@ export const GamePlayer: FC<GameDealerProps> = ({
 
       <Typography variant="subtitle2">Dealer:</Typography>
       <Grid container direction="column">
-        <Grid container justifyContent="space-between" alignItems="flex-end" className={classes.mBottom}>        
-          <Grid item >
+        <Grid container justifyContent="space-between" alignItems="flex-end" >        
+          <Grid item className={classes.mBottom}>
             {dealer && (
               <UserCard
                 user={dealer}
                 observer={dealer.userRole === roles.observer ? true : false}
-                onKickUser={() => {}}
+                onKickUser={() => {}}                
               />
             )}
           </Grid>
+          <Grid item className={clsx(classes.mBottom, classes.voting)}> 
           {(timer && !timer.isTimer) && !state.dealer && voting && <Pulse /> }
-          <Grid item >
+          </Grid>
+          <Grid item className={classes.mBottom}>
             <Box boxShadow={2} mr={10}>
               <Button
                 variant="outlined"

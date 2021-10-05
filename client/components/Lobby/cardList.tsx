@@ -5,11 +5,10 @@ import { nonVoted } from 'utils/configs';
 
 interface CardListProps {
   cardDeck: Array<string>;
-  sequence: Array<number | string>;
+  sequence: Array<string>;
   onAddCard: () => void;
   cardPot: string;
-  onRemoveCard: () => void;
-  customSequence: Array<number | string>;
+  onRemoveCard: () => void;  
 }
 
 export const CardList: FC<CardListProps> = ({
@@ -17,8 +16,7 @@ export const CardList: FC<CardListProps> = ({
   sequence,
   onAddCard,
   cardPot,
-  onRemoveCard,
-  customSequence,
+  onRemoveCard,  
 }) => {
 
   return (
@@ -28,8 +26,7 @@ export const CardList: FC<CardListProps> = ({
         {cardPot && <GameCard cardImg={cardPot} cardNumber={nonVoted} />}
         {cardDeck &&
           sequence &&
-          cardDeck.map((deck, i) => (
-            // <GameCard cardImg={deck} cardNumber={customSequence.indexOf('') === -1 ? Number(customSequence[i]) : sequence[i]} key={deck} />
+          cardDeck.map((deck, i) => (  
             <GameCard cardImg={deck} cardNumber={sequence[i]} key={deck} />
           ))}
         <GameCard

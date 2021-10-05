@@ -22,11 +22,11 @@ export const Chat: FC<ChatProps> = ({ chatMessages }) => {
   const onSendClick = async () => {
     if (message) {
       if (!state.userId) {
-        console.log('userId: ', state.userId);
+        
         await dispatch(setUserId(appStorage.getSession()));
       }
       if (!state.roomId) {
-        console.log('roomId: ', state.roomId);
+        
         await dispatch(setRoom(router.query.lobby, ''));
       }
       state.socket.emit('sendMessage', {
@@ -42,11 +42,11 @@ export const Chat: FC<ChatProps> = ({ chatMessages }) => {
     if (message && e.key === 'Enter') {
       if (!state.userId) {
         await dispatch(setUserId(appStorage.getSession()));
-        console.log('userId: ', state.userId);
+        
       }
       if (!state.roomId) {
         await dispatch(setRoom(router.query.lobby, ''));
-        console.log('roomId: ', state.roomId);
+        
       }
 
       state.socket.emit('sendMessage', {

@@ -85,7 +85,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
       };
       setOpenCreate(false);
       const created = await apiCreateRoom(config);
-      console.log('Room', created);
+      
       goToLobby(id);
     }
   };
@@ -169,7 +169,7 @@ export const InitPage: FC<MakeChoiceProps> = ({ rooms }) => {
 
   useEffect(() => {
     window.onbeforeunload = () => {
-      console.log('HHHHHHH');
+      
     };
     dispatch(setRoom('', ''));
     dispatch(setUserId(''));

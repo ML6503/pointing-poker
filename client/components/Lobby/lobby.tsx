@@ -164,7 +164,7 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
 
   useEffect(() => {
     router.beforePopState(({ url, as }) => {
-      console.log('beforePopState');
+      
       state.socket.emit('leaveRoom', {
         roomId: lobby,
         userId: state.userId,
@@ -219,7 +219,7 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
     });
 
     state.socket.on('disconnected', () => {
-      console.log('Disconnected!!!');
+      
       router.push('/');
     });
 
@@ -253,7 +253,7 @@ const Lobby: FC<LobbyProps> = ({ lobbyInfo }) => {
       });
 
       state.socket.off('disconnected', () => {
-        console.log('Disconnected!!!');
+        
         router.push('/');
       });
 

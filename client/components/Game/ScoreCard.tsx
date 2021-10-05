@@ -15,7 +15,7 @@ export const ScoreCard = ({ player }: UserCardProps) => {
     <div className={classes.container}>
       {player && (
         <Typography variant="h5">
-          {player.choice === nonVoted || player.choice === 0 ? (
+          {player.choice === +nonVoted || player.choice === 0 ? (
             'unknown'
           ) : (
             `${player.choice} points`

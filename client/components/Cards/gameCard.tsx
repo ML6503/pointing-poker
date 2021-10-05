@@ -18,13 +18,13 @@ const cardSize = {
 
 interface GameCardProps {
   cardImg: string;
-  cardNumber: number | string;
+  cardNumber: string;
   game?: boolean;
   empty?: boolean;
   onAddCard?: () => void;
   onRemoveCard?: () => void;
   deckLength?: number;
-  onGameCardClick?: (cardName: string, cardNumber: number) => void
+  onGameCardClick?: (cardName: string, cardNumber: string) => void
   activeCard?: string
   voting?: boolean
 }
