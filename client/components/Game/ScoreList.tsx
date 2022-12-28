@@ -6,6 +6,7 @@ import { IGamePageIssue, IGamePagePlayer, IUser } from 'utils/interfaces';
 import { ScoreCard } from './scoreCard';
 import { UserGameCard } from './userGameCard';
 
+
 interface ScoreListProps {
   users: Array<IUser>;
   issues: Array<IGamePageIssue>;
