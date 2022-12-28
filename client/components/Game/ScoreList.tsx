@@ -3,7 +3,7 @@ import useStylesScoreList from '@styles/scoreList.style';
 import React, { FC, useEffect, useState } from 'react';
 import { roles } from 'utils/configs';
 import { IGamePageIssue, IGamePagePlayer, IUser } from 'utils/interfaces';
-import { ScoreCard } from './scoreCard';
+import { ScoreCard } from './scoresCard';
 import { UserGameCard } from './userGameCard';
 
 

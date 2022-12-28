@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import useStylesScoreCard from '@styles/scoreCard.style';
-import React, { useState } from 'react';
+import React from 'react';
 import { nonVoted } from 'utils/configs';
 import { IGamePagePlayer } from 'utils/interfaces';
 
